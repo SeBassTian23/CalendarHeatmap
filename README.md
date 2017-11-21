@@ -2,6 +2,8 @@
 
 This [jQuery] plugin allows to conveniently display data like contributions on a day by day basis, indicating the count by colors.
 
+![Calendar Heatmap](https://user-images.githubusercontent.com/6181737/33098032-04143994-ceda-11e7-9a05-47dbef561a70.png)
+
 ## Usage
 
 1. Include [jQuery] and [Moment.js]:
