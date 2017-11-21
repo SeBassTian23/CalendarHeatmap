@@ -1,0 +1,224 @@
+@day-background: #c8d7e1;
+@day-bg-future: #d9e3ea;
+@day-border: #f3f6f8;
+
+// Earth
+@earth-1: rgb(244, 236, 21);
+@earth-2: rgb(134, 191, 118);
+@earth-3: rgb(17, 123, 215);
+@earth-4: rgb(54, 50, 153);
+
+// Electric
+@electric-1: rgb(249, 216, 36);
+@electric-2: rgb(243, 134, 71);
+@electric-3: rgb(142, 12, 163);
+@electric-4: rgb(46, 4, 149);
+
+// Viridis
+@viridis-1: rgb(221, 226, 24);
+@viridis-2: rgb(66, 189, 112);
+@viridis-3: rgb(53, 92, 140);
+@viridis-4: rgb(71, 17, 100);
+
+// Picknick
+@picknick-1: rgb(221, 42, 145);
+@picknick-2: rgb(177, 77, 236);
+@picknick-3: rgb(46, 142, 191);
+@picknick-4: rgb(19, 152, 99);
+
+// Green
+@green-1: rgb(209, 190, 90);
+@green-2: rgb(95, 144, 11);
+@green-3: rgb(57, 129, 27);
+@green-4: rgb(13, 86, 44);
+
+// Blue
+@blue-1: rgb(255, 255, 204);
+@blue-2: rgb(65, 182, 196);
+@blue-3: rgb(8, 104, 172);
+@blue-4: rgb(37, 52, 148);
+
+// Teal
+@teal-1: rgb(190, 207, 182);
+@teal-2: rgb(125, 178, 143);
+@teal-3: rgb(16, 125, 121);
+@teal-4: rgb(28, 71, 93);
+
+// Red
+@red-1: rgb(222, 183, 175);
+@red-2: rgb(207, 131, 113);
+@red-3: rgb(182, 59, 37);
+@red-4: rgb(144, 19, 28);
+
+// Standard Gradient
+@standard-1: rgb(166,201,106);
+@standard-2: rgb(92,184,92);
+@standard-3: rgb(0,158,71);
+@standard-4: rgb(0,117,58);
+
+.ch {
+    display: table !important;
+    clear: both;
+}
+
+.ch-month, .ch-week-labels {
+    font-size: 0;
+    display: inline-block;
+    white-space: normal;
+    margin: 0 4px;
+}
+
+.ch-week, .ch-day-labels {
+    display: inline-block;
+    width: 11px;
+    box-sizing: content-box;
+}
+
+.ch-day-labels {
+    width:inherit;
+}
+
+.ch-month-label {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.ch-day-label {
+    text-align: center;
+    font-size: 12px;
+    display: block;
+    margin: 0;
+    line-height: 11px;
+    box-sizing: content-box;
+}
+
+.ch-day {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border: 1px solid @day-border;
+    background-color: @day-background;
+    margin: 0;
+    box-sizing: content-box;
+}
+
+.ch-day.is-outside-month,
+.ch-lvl.is-outside-month,
+.ch-day.is-outside-month:hover,
+.ch-lvl.is-outside-month:hover {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.ch-day.lvl-0,
+.ch-lvl.lvl-0 {
+    background-color: @day-background;
+}
+
+.ch-day.is-after-today,
+.ch-lvl.is-after-today {
+    background-color: @day-bg-future;
+}
+
+.ch-day.lvl-1,
+.ch-lvl.lvl-1 {
+    background-color: @standard-1;
+}
+
+.ch-day.lvl-2,
+.ch-lvl.lvl-2 {
+    background-color: @standard-2;
+}
+
+.ch-day.lvl-3,
+.ch-lvl.lvl-3 {
+    background-color: @standard-3;
+}
+
+.ch-day.lvl-4,
+.ch-lvl.lvl-4 {
+    background-color: @standard-4;
+}
+
+.ch-day:hover,
+.ch-lvl:hover {
+    border-color: darken(@day-border,33%);
+}
+
+.ch-legend {
+    padding-top: 10px;
+    text-align: right;
+}
+
+.ch-legend-left {
+    text-align: left !important;
+}
+
+.ch-legend-center {
+    text-align: center !important;
+}
+
+.ch-legend:after {
+    content: ".";
+    display: block;
+    height: 0;
+    width: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.ch-lvls {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    padding: 2px 9px 0 5px;
+}
+
+.ch-lvl {
+    width: 10px;
+    height: 10px;
+    float: left;
+    margin-left: 3px;
+}
+
+// Generate gradients
+.generate-gradient(4);
+
+.generate-gradient(@n, @i: 1) when (@i =< @n) {
+    .blue-@{i} {
+        @color: "blue-@{i}";
+        background-color: @@color !important;
+    }
+    .earth-@{i} {
+        @color: "earth-@{i}";
+        background-color: @@color !important;
+    }
+    .electric-@{i} {
+        @color: "electric-@{i}";
+        background-color: @@color !important;
+    }
+    .viridis-@{i} {
+        @color: "viridis-@{i}";
+        background-color: @@color !important;
+    }
+    .picknick-@{i} {
+        @color: "picknick-@{i}";
+        background-color: @@color !important;
+    }
+    .green-@{i} {
+        @color: "green-@{i}";
+        background-color: @@color !important;
+    }
+    .teal-@{i} {
+        @color: "teal-@{i}";
+        background-color: @@color !important;
+    }
+    .red-@{i} {
+        @color: "red-@{i}";
+        background-color: @@color !important;
+    }
+    .generate-gradient(@n, (@i + 1));
+}

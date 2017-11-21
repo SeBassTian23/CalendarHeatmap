@@ -1,0 +1,25 @@
+{
+  "name": "jquery-CalendarHeatmap",
+  "license": "MIT",
+  "authors": [
+    "Zeno Rocha <hi@zenorocha.com>"
+  ],
+  "description": "A jump-start for jQuery plugins development.",
+  "homepage": "http://jqueryCalendarHeatmap.com",
+  "keywords": [
+    "jquery",
+    "plugin",
+    "CalendarHeatmap",
+    "jquery-plugin",
+    "jquery-CalendarHeatmap"
+  ],
+  "main": "src/jquery.CalendarHeatmap.js",
+  "dependencies": {
+    "jquery": "1"
+  },
+  "ignore": [
+    "npm-debug.log",
+    "bower_components",
+    "node_modules"
+  ]
+}
