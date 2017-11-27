@@ -87,7 +87,10 @@
                 var firstStep = Math.min.apply( Math, arr );
                 var stepWidth = ( Math.max.apply( Math, arr ) - firstStep ) / bins;
                 if ( stepWidth === 0 ) {
-                    stepWidth = firstStep / bins;
+                    stepWidth = Math.max.apply( Math, arr ) / bins;
+                    if ( stepWidth < 1 ) {
+                        stepWidth = 1;
+                    }
                 }
 
                 for ( i = 0; i < bins; i++ ) {
@@ -103,7 +106,11 @@
 
                 for ( i in events ) {
                     if ( events[ i ].count - firstStep === 0 ) {
-                        events[ i ].level = 4;
+                        events[ i ].level = ( Math.min(
+                            Math.floor(
+                                ( ( events[ i ].count ) / stepWidth )
+                            ), bins - 1
+                        ) + 1 );
                     } else {
                         events[ i ].level = ( Math.min(
                             Math.floor(
