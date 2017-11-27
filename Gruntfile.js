@@ -25,7 +25,8 @@ module.exports = function (grunt) {
 				},
 				files: {
 					"dist/jquery.CalendarHeatmap.js": "src/jquery.CalendarHeatmap.js",
-					"dist/jquery.CalendarHeatmap.css": "dist/jquery.CalendarHeatmap.css"
+					"dist/jquery.CalendarHeatmap.css": "dist/jquery.CalendarHeatmap.css",
+					"dist/jquery.CalendarHeatmap.min.css": "dist/jquery.CalendarHeatmap.min.css"
 				}
 			}
 		},
@@ -114,6 +115,6 @@ module.exports = function (grunt) {
 
 	grunt.registerTask("travis", ["jshint", "karma:travis"]);
 	grunt.registerTask("lint", ["jshint", "jscs"]);
-	grunt.registerTask("build", ["less", "concat", "uglify", "cssmin"]);
+	grunt.registerTask("build", ["less", "cssmin", "concat", "uglify"]);
 	grunt.registerTask("default", ["jshint", "build", "karma:unit:run"]);
 };
