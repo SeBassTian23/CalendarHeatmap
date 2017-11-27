@@ -1,6 +1,6 @@
 {
   "name": "calendarheatmap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple Calendar Heatmap for jQuery.",
   "keywords": [
     "jquery-plugin",
