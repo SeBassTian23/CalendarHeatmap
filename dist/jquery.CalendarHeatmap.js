@@ -1,5 +1,5 @@
 /*
- *  calendarheatmap - v0.0.2
+ *  calendarheatmap - v0.0.3
  *  A simple Calendar Heatmap for jQuery.
  *  https://github.com/SeBassTian23/CalendarHeatmap
  *
@@ -141,7 +141,7 @@
             },
             calendarHeatmap: function( ) {
 
-                if ( !this.data || this.data.length === 0 ) {
+                if ( !this.data || $.type( this.data ) !== "array" ) {
                     return;
                 }
 
