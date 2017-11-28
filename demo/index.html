@@ -35,6 +35,9 @@
 		<div class="col-md-12">
 			<div id="heatmap-3"></div>
 		</div>
+		<div class="col-md-12">
+			<div id="heatmap-4"></div>
+		</div>
 	</div>
 	<script>
 		$(function () {
@@ -88,6 +91,11 @@
 					show: true
 				}
 			});
+
+			$("#heatmap-4").CalendarHeatmap( [], {
+				title: "No Data"
+			});
+
 		});
 	</script>
 </body>
