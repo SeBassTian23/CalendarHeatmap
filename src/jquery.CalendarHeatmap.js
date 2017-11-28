@@ -133,7 +133,7 @@
             },
             calendarHeatmap: function( ) {
 
-                if ( !this.data || this.data.length === 0 ) {
+                if ( !this.data || $.type( this.data ) !== "array" ) {
                     return;
                 }
 
