@@ -16,7 +16,7 @@
 	</style>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 	<script src="../dist/jquery.CalendarHeatmap.min.js"></script>
 </head>
 
@@ -40,62 +40,58 @@
 		</div>
 	</div>
 	<script>
-		$(function () {
+		function randomDate(start, end) {
+			var date = new Date(+start + Math.random() * (end - start));
+			return moment(date).format('YYYY-MM-DD');
+		}
 
-			function randomDate(start, end) {
-				var date = new Date(+start + Math.random() * (end - start));
-				return moment(date).format('YYYY-MM-DD');
-			}
+		var events = ( Math.random() * 200 ).toFixed(0);
+		var data = [];
+		for (var i = 0; i < events; i++ ) {
+			data.push({
+				count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
+				date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+			});
+		}
 
-			var events = ( Math.random() * 200 ).toFixed(0);
-			var data = [];
-			for (var i = 0; i < events; i++ ) {
-				data.push({
-					count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
-					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
-				});
-			}
+		$("#heatmap-1").CalendarHeatmap(data, {});
 
-			$("#heatmap-1").CalendarHeatmap(data, {});
-
-			$("#heatmap-2").CalendarHeatmap(data, {
-				title: "Gradient \"red\", end one month from current",
-				lastMonth: moment().month(),
-				coloring: "red",
-				legend: {
-					minLabel: "Fewer"
-				},
-				labels: {
-					custom: {
-						monthLabels: "MMM"
-					}
+		$("#heatmap-2").CalendarHeatmap(data, {
+			title: "Gradient \"red\", end one month from current",
+			lastMonth: moment().month(),
+			coloring: "red",
+			legend: {
+				minLabel: "Fewer"
+			},
+			labels: {
+				custom: {
+					monthLabels: "MMM"
 				}
-			});
+			}
+		});
 
-			$("#heatmap-3").CalendarHeatmap(data, {
-				title: "Gradient \"electric\", labels days and custom month labels, end one year from current",
-				months: 5,
-				lastYear: moment().subtract(1,'years').year(),
-				coloring: "electric",
-				legend: {
-					align: "left",
-					minLabel: "Fewer"
-				},
-				labels: {
-					days: true,
-					custom: {
-						monthLabels: "MMM 'YY"
-					}
-				},
-				tooltips:{
-					show: true
+		$("#heatmap-3").CalendarHeatmap(data, {
+			title: "Gradient \"electric\", labels days and custom month labels, end one year from current",
+			months: 5,
+			lastYear: moment().subtract(1,'years').year(),
+			coloring: "electric",
+			legend: {
+				align: "left",
+				minLabel: "Fewer"
+			},
+			labels: {
+				days: true,
+				custom: {
+					monthLabels: "MMM 'YY"
 				}
-			});
+			},
+			tooltips:{
+				show: true
+			}
+		});
 
-			$("#heatmap-4").CalendarHeatmap( [], {
-				title: "No Data"
-			});
-
+		$("#heatmap-4").CalendarHeatmap( [], {
+			title: "No Data"
 		});
 	</script>
 </body>
