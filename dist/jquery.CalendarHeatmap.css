@@ -44,7 +44,7 @@
   display: inline-block;
   width: 9px;
   height: 9px;
-  border: 1px solid #f3f6f8;
+  border: 1px solid #ffffff;
   background-color: #c8d7e1;
   margin: 0;
   box-sizing: content-box;
@@ -82,7 +82,7 @@
 }
 .ch-day:hover,
 .ch-lvl:hover {
-  border-color: #89a6ba;
+  border-color: #ababab;
 }
 .ch-legend {
   padding-top: 10px;

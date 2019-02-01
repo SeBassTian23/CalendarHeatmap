@@ -7,6 +7,7 @@
             defaults = {
                 title: null,
                 months: 12,
+                weekStartDay: 1,
                 lastMonth: moment().month() + 1,
                 lastYear: moment().year(),
                 coloring: null,
@@ -52,22 +53,74 @@
                     console.log( "The calendar heatmap plugin requires moment.js" );
                 }
             },
-            weeksInMonth: function( month, year ) {
+            parse: function() {
 
-                // This function determines, how many weeks there are in the month,
-                // to display the right number of columns
-                var s = moment()
-                    .set( { "year": year, "month": month } )
-                    .startOf( "month" )
-                    .isoWeek();
-                var e = moment()
-                    .set( { "year": year, "month": month } )
-                    .endOf( "month" )
-                    .isoWeek();
-                if ( s > e ) {
-                    e += s;
+                var type = $.type( this.data );
+                if ( [ "array", "object" ].indexOf( type ) === -1 ) {
+                    console.log( "Invalid data source" );
+                    return null;
+                } else {
+                    if ( type === "array" && this.data.length > 0 ) {
+                        var arrtype = $.type( this.data[ 0 ] );
+                        if ( arrtype === "object" ) {
+                            if ( this.data[ 0 ].date && this.data[ 0 ].count ) {
+                                return this.data.slice( 0 );
+                            } else {
+                                return null;
+                            }
+                        } else if ( [ "string", "date" ].indexOf( arrtype ) > -1 ) {
+                            if ( moment( this.data[ 0 ] ).isValid() ) {
+                                var obj = {};
+                                for ( var i in this.data ) {
+                                    var d = moment( this.data[ i ] ).format( "YYYY-MM-DD" );
+                                    if ( !obj[ d ] ) {
+                                        obj[ d ] = 1;
+                                    } else {
+                                        obj[ d ] += 1;
+                                    }
+                                }
+                                var arr = [];
+                                for ( var j in obj ) {
+                                    arr.push( {
+                                        "count": obj[ j ],
+                                        "date": j
+                                    } );
+                                }
+                                return arr;
+                            } else {
+                                return null;
+                            }
+                        } else {
+                            return null;
+                        }
+                    } else if ( type === "array" && this.data.length === 0 ) {
+                        return [];
+                    } else if ( type === "object" && !Object.empty( this.data ) ) {
+                        var keys = Object.keys( this.data );
+                        if ( moment( keys[ 0 ] ).isValid() ) {
+                            if ( $.type( this.data[ keys[ 0 ] ] ) === "number" ) {
+                                var data = [];
+                                for ( var k in this.data ) {
+                                    data.push( {
+                                        "count": this.data[ k ],
+                                        "date": moment( k ).format( "YYYY-MM-DD" )
+                                    } );
+                                }
+                                return data;
+                            }
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        return null;
+                    }
                 }
-                return e - s + 1;
+            },
+            index: function( data ) {
+                this.idx = {};
+                for ( var i in data ) {
+                    this.idx[ data[ i ].date ] = i;
+                }
             },
             pad: function( str, max ) {
                 str = String( str );
@@ -80,71 +133,160 @@
                 var i;
                 var bins = this.settings.steps || 4;
                 var binlabels = [ "0" ];
+                var binlabelrange = [ [ 0, 0 ] ];
                 for ( i in events ) {
                     events[ i ].count = parseInt( events[ i ].count );
                     arr.push( events[ i ].count );
                 }
                 var firstStep = Math.min.apply( Math, arr );
-                var stepWidth = ( Math.max.apply( Math, arr ) - firstStep ) / bins;
+                var maxCount = Math.max.apply( Math, arr );
+                var stepWidth = ( maxCount - firstStep ) / bins;
+
                 if ( stepWidth === 0 ) {
-                    stepWidth = Math.max.apply( Math, arr ) / bins;
+                    stepWidth = maxCount / bins;
                     if ( stepWidth < 1 ) {
                         stepWidth = 1;
                     }
                 }
 
+                // Generate bin labels
                 for ( i = 0; i < bins; i++ ) {
-                    var l = Math.round( i * stepWidth ) + 1;
-                    if ( i === 3 ) {
-                        l += "+";
+                    if ( !isFinite( firstStep ) ) {
+                        binlabels.push( "" );
+                        binlabelrange.push( [ null, null ] );
+                    } else if ( maxCount < bins ) {
+                        if ( ( i - ( bins - maxCount ) ) >= 0 ) {
+                            binlabels.push( String( 1 + ( i - ( bins - maxCount ) ) ) );
+                            binlabelrange.push( [
+                                ( 1 + ( i - ( bins - maxCount ) ) ),
+                                ( 1 + ( i - ( bins - maxCount ) ) )
+                            ] );
+                        } else {
+                            binlabels.push( "" );
+                            binlabelrange.push( [ null, null ] );
+                        }
+                    } else if ( maxCount === bins ) {
+                        binlabels.push( String( ( i + 1 ) ) );
+                        binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
+                    } else if ( ( maxCount - 2 ) === bins ) {
+                        if ( ( i + 1 ) === bins ) {
+                            binlabels.push( String( ( i + 1 ) ) + "+" );
+                            binlabelrange.push( [ ( i + 1 ), null ] );
+                        } else {
+                            binlabels.push( String( ( i + 1 ) ) );
+                            binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
+                        }
                     } else {
-                        l += " to ";
-                        l += Math.round( i * stepWidth + stepWidth );
+                        var l = Math.round( i * stepWidth ) + 1;
+                        var ll = Math.round( i * stepWidth + stepWidth );
+                        binlabelrange.push( [ l, ll ] );
+                        if ( i === ( bins - 1 ) ) {
+                            l += "+";
+                        } else {
+                            if ( l !== ll ) {
+                                l += " to ";
+                                l += ll;
+                            }
+                        }
+                        binlabels.push( String( l ) );
                     }
-                    binlabels.push( String( l ) );
                 }
 
+                // Assign bins to counts
                 for ( i in events ) {
-                    if ( events[ i ].count - firstStep === 0 ) {
-                        events[ i ].level = ( Math.min(
-                            Math.floor(
-                                ( ( events[ i ].count ) / stepWidth )
-                            ), bins - 1
-                        ) + 1 );
-                    } else {
-                        events[ i ].level = ( Math.min(
-                            Math.floor(
-                                ( ( events[ i ].count - firstStep ) / stepWidth )
-                            ), bins - 1
-                        ) + 1 );
-                    }
-                }
 
-                if ( events.length === 0 ) {
-                    binlabels = null;
+                    if ( events[ i ].count === 0 ) {
+                        events[ i ].level = 0;
+                    } else if ( events[ i ].count - firstStep === 0 ) {
+                        events[ i ].level = 1;
+                    } else if ( !isFinite( firstStep ) ) {
+                        events[ i ].level = bins;
+                    } else {
+                        events[ i ].level = this.matchBin( binlabelrange, events[ i ].count );
+                    }
                 }
 
                 return { events: events, bins: binlabels };
             },
+            matchBin: function( range, value ) {
+                for ( var r in range ) {
+                    if ( value >= range[ r ][ 0 ] && value <= range[ r ][ 1 ] ) {
+                        return r;
+                    }
+                }
+                return 0;
+            },
             matchDate: function( obj, key ) {
-                return obj.find( function( o ) {
-                    return o.date === key;
-                } );
+
+                if ( this.idx[ key ] ) {
+                    return obj[ this.idx[ key ] ];
+                } else {
+                    return null;
+                }
+            },
+            addWeekColumn: function( ) {
+                if ( this.settings.labels.days ) {
+                    $( ".ch-year", this.element )
+                        .append( "<div class=\"ch-week-labels\"></div>" );
+
+                    $( ".ch-week-labels", this.element )
+                        .append( "<div class=\"ch-week-label-col\"></div>" );
+
+                    $( ".ch-week-label-col", this.element )
+                        .append( "<div class=\"ch-day-labels\"></div>" );
+
+                    // If month labels are displayed a placeholder needs to be added
+                    if ( this.settings.labels.months ) {
+                        $( ".ch-week-labels", this.element )
+                            .append( "<div class=\"ch-month-label\">&nbsp;</div>" );
+                    }
+
+                    var swd = this.settings.weekStartDay || 1;
+
+                    for ( var i = 0; i < 7; i++ ) {
+
+                        var dayName = moment().weekday( ( i + swd ) ).format( "ddd" );
+                        var dayNumber = moment().weekday( ( i + swd ) ).format( "d" );
+                        if ( ( i - 1 ) % 2 ) {
+                            var wdl = this.settings.labels.custom.weekDayLabels;
+                            if ( $.type( wdl ) === "array" ) {
+                                dayName = wdl[ dayNumber ] || "";
+                            } else if ( $.type( wdl ) === "string" ) {
+                                dayName = moment().weekday( ( i + swd ) )
+                                .format( wdl );
+                            }
+                        } else {
+                            dayName = "&nbsp;";
+                        }
+                        $( "<div>", {
+                            class: "ch-day-label",
+                            html: dayName
+                        } )
+                        .appendTo( $( ".ch-day-labels", this.element ) );
+                    }
+                }
             },
             calendarHeatmap: function( ) {
 
-                if ( !this.data || $.type( this.data ) !== "array" ) {
+                var data = this.parse();
+
+                if ( $.type( data ) !== "array" ) {
                     return;
                 }
 
-                var calc = this.calculateBins( this.data );
-                var events = calc.events;
+                // Generate lookup index
+                this.index( data );
 
-                var binLabels = calc.bins || [ "", "", "", "", "" ];
+                var calc = this.calculateBins( data );
+                var events = calc.events;
+                var binLabels = calc.bins;
                 var currMonth = this.settings.lastMonth;
                 var currYear = this.settings.lastYear;
                 var months = this.settings.months;
                 var i;
+
+                // Start day of the week
+                var swd = this.settings.weekStartDay || 1;
 
                 // Empty container first
                 $( this.element ).empty();
@@ -161,42 +303,8 @@
                 $( this.element ).addClass( "ch" )
                     .append( "<div class=\"ch-year\"></div>" );
 
-                // Add weekday labels
-                if ( this.settings.labels.days ) {
-                    $( ".ch-year", this.element )
-                    .append( "<div class=\"ch-week-labels\"></div>" );
-
-                    $( ".ch-week-labels", this.element )
-                    .append( "<div class=\"ch-week-label-col\"></div>" );
-
-                    if ( this.settings.labels.months ) {
-                        $( ".ch-week-labels", this.element )
-                        .append( "<div class=\"ch-month-label\">&nbsp;</div>" );
-                    }
-
-                    $( ".ch-week-label-col", this.element )
-                    .append( "<div class=\"ch-day-labels\"></div>" );
-
-                    for ( i = 1; i < 8; i++ ) {
-                        var dayName = moment().weekday( i ).format( "ddd" );
-                        if ( i % 2 ) {
-                            var wdl = this.settings.labels.custom.weekDayLabels;
-                            if ( $.type( wdl ) === "array" ) {
-                                dayName = wdl[ ( i - 1 ) ] || "";
-                            }else if ( $.type( wdl ) === "string" ) {
-                                dayName = moment().weekday( i )
-                                .format( wdl );
-                            }
-                        } else {
-                            dayName = "&nbsp;";
-                        }
-                        $( "<div>", {
-                            class: "ch-day-label",
-                            html: dayName
-                        } )
-                        .appendTo( $( ".ch-day-labels", this.element ) );
-                    }
-                }
+                // Add labels
+                this.addWeekColumn();
 
                 // Start building the months
                 for ( i = months; i > 0; i-- ) {
@@ -230,62 +338,70 @@
                         .append( "<div class=\"ch-month-label\">" + monthName + "</div>" );
                     }
 
-                    // Add weeks
-                    var weeks = this.weeksInMonth( month, year );
-                    for ( var j = 0; j < weeks; j++ ) {
+                    // Get the number of days for the month
+                    var days = moment().set( { "month": month, "year": year } ).daysInMonth();
 
-                        // Add week
-                        $( ".ch-month:last .ch-weeks", this.element )
-                            .append( "<div class=\"ch-week\"></div>" );
-                        var offset = 0;
-                        if ( j === 0 ) {
-                            offset = moment().set( { "month":month, "year": year } )
-                                .startOf( "month" ).isoWeekday() - 1;
-                        }
-                        if ( j === weeks - 1 ) {
-                            offset = moment().set( { "month":month, "year": year } )
-                                .endOf( "month" ).isoWeekday() - 1;
-                        }
+                    // Add the first week
+                    $( ".ch-month:last .ch-weeks", this.element )
+                        .append( "<div class=\"ch-week\"></div>" );
 
-                        // Add days
-                        for ( var k = 0; k < 7; k++ ) {
-                            if ( ( offset > k && j === 0 ) || ( offset < k && j === weeks - 1 ) ) {
-                                $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
-                                    .append( "<div class=\"ch-day is-outside-month\"></div>" );
-                            }else {
-                                var key = year + "-";
-                                key += this.pad( ( month + 1 ), 2 ) + "-";
-                                key += this.pad( ( ( 7 * j ) + ( k + 1 ) - moment()
-                                .set( { "month":month, "year": year } )
-                                .startOf( "month" ).isoWeekday() + 1 ), 2 );
-                                var obj = this.matchDate( events, key );
+                    // Week day counter
+                    var wc = 0;
+                    for ( var j = 0; j < days; j++ ) {
+                        var str = year + "-" + this.pad( ( month + 1 ), 2 );
+                        str += "-" + this.pad( ( j + 1 ), 2 );
+                        var obj = this.matchDate( events, str );
 
-                                if ( obj !== undefined ) {
-                                    var title = obj.count + " on ";
-                                    title += moment( obj.date ).format( "ll" );
-                                    $( "<div>", {
-                                        "class": "ch-day lvl-" + obj.level,
-                                        "title": title,
-                                        "data-toggle": "tooltip"
-                                    } ).appendTo(
-                                        $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
-                                    );
+                        if ( obj ) {
+                            var title = obj.count + " on ";
+                            title += moment( obj.date ).format( "ll" );
 
-                                    if ( this.settings.coloring ) {
-                                        $( ".ch-month:last .ch-weeks .ch-week:last .ch-day:last",
-                                        this.element )
-                                        .addClass( this.settings.coloring + "-" + obj.level );
-                                    }
+                            var color = "";
 
-                                }else {
-                                    $( "<div>", {
-                                        "class": "ch-day"
-                                    } ).appendTo(
-                                        $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
-                                    );
-                                }
+                            if ( this.settings.coloring ) {
+                                color = " " + this.settings.coloring + "-" + obj.level;
                             }
+
+                            $( "<div/>", {
+                                "class": "ch-day lvl-" + obj.level + color,
+                                "title": title,
+                                "data-toggle": "tooltip"
+                            } ).appendTo(
+                                $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
+                            );
+
+                        } else {
+                            $( "<div/>", {
+                                "class": "ch-day"
+                            } ).appendTo(
+                                $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
+                            );
                         }
+
+                        // Get the iso week day to see if a new week has started
+                        var wd = moment().set( {
+                            "date": ( j + 2 ),
+                            "month": month,
+                            "year": year
+                        } ).isoWeekday();
+
+                        // Incrementing the day counter for the week
+                        wc++;
+
+                        if ( wd === swd  && ( days - 1 ) > j ) {
+
+                            $( ".ch-month:last .ch-weeks", this.element )
+                                .append( "<div class=\"ch-week\">" + j + "</div>" );
+
+                            // Reset the week day counter
+                            wc = 0;
+                        }
+                    }
+
+                    // Now fill up the last week with blank days
+                    for ( wc; wc < 7; wc++ ) {
+                        $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
+                            .append( "<div class=\"ch-day is-outside-month\"></div>" );
                     }
                 }
 
@@ -297,9 +413,9 @@
                         class: "ch-legend"
                     } )
                     .appendTo( this.element )
-                    .append( "<small>" + this.settings.legend.minLabel + "</small>" )
+                    .append( "<small>" + ( this.settings.legend.minLabel || "" ) + "</small>" )
                     .append( "<ul class=\"ch-lvls\"></ul>" )
-                    .append( "<small>" + this.settings.legend.maxLabel + "</small>" );
+                    .append( "<small>" + ( this.settings.legend.maxLabel || "" ) + "</small>" );
 
                     if ( this.settings.legend.align === "left" ) {
                         $( ".ch-legend", this.element ).addClass( "ch-legend-left" );
@@ -310,7 +426,7 @@
                     }
 
                     // Add the legend steps
-                    for ( i = 0; i < 5; i++ ) {
+                    for ( i = 0; i < binLabels.length; i++ ) {
                         $( "<li>", {
                             "class": "ch-lvl lvl-" + i,
                             "title": binLabels[ i ],
