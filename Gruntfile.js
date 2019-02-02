@@ -1,9 +1,9 @@
-module.exports = function (grunt) {
+module.exports = function( grunt ) {
 
-	grunt.initConfig({
+	grunt.initConfig( {
 
 		// Import package manifest
-		pkg: grunt.file.readJSON("package.json"),
+		pkg: grunt.file.readJSON( "package.json" ),
 
 		// Banner definitions
 		meta: {
@@ -33,7 +33,7 @@ module.exports = function (grunt) {
 
 		// Lint definitions
 		jshint: {
-			files: ["src/jquery.CalendarHeatmap.js", "test/**/*"],
+			files: [ "src/jquery.CalendarHeatmap.js", "test/**/*" ],
 			options: {
 				jshintrc: ".jshintrc"
 			}
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
 		// Minify definitions
 		uglify: {
 			dist: {
-				src: ["dist/jquery.CalendarHeatmap.js"],
+				src: [ "dist/jquery.CalendarHeatmap.js" ],
 				dest: "dist/jquery.CalendarHeatmap.min.js"
 			},
 			options: {
@@ -83,14 +83,14 @@ module.exports = function (grunt) {
 				configFile: "karma.conf.js",
 				background: true,
 				singleRun: false,
-				browsers: ["Chrome"]
+				browsers: [ "Chrome" ]
 			},
 
 			//continuous integration mode: run tests once in PhantomJS browser.
 			travis: {
 				configFile: "karma.conf.js",
 				singleRun: true,
-				browsers: ["Chrome"]
+				browsers: [ "Chrome" ]
 			}
 		},
 
@@ -98,23 +98,23 @@ module.exports = function (grunt) {
 		// Better than calling grunt a million times
 		// (call 'grunt watch')
 		watch: {
-			files: ["src/*", "test/**/*"],
-			tasks: ["default"]
+			files: [ "src/*", "test/**/*" ],
+			tasks: [ "default" ]
 		}
 
-	});
+	} );
 
-	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadNpmTasks("grunt-contrib-jshint");
-	grunt.loadNpmTasks("grunt-jscs");
-	grunt.loadNpmTasks("grunt-contrib-uglify");
-	grunt.loadNpmTasks('grunt-contrib-less');
-	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks("grunt-contrib-watch");
-	grunt.loadNpmTasks("grunt-karma");
+	grunt.loadNpmTasks( "grunt-contrib-concat" );
+	grunt.loadNpmTasks( "grunt-contrib-jshint" );
+	grunt.loadNpmTasks( "grunt-jscs" );
+	grunt.loadNpmTasks( "grunt-contrib-uglify" );
+	grunt.loadNpmTasks( "grunt-contrib-less" );
+	grunt.loadNpmTasks( "grunt-contrib-cssmin" );
+	grunt.loadNpmTasks( "grunt-contrib-watch" );
+	grunt.loadNpmTasks( "grunt-karma" );
 
-	grunt.registerTask("travis", ["jshint", "karma:travis"]);
-	grunt.registerTask("lint", ["jshint", "jscs"]);
-	grunt.registerTask("build", ["less", "cssmin", "concat", "uglify"]);
-	grunt.registerTask("default", ["jshint", "build", "karma:unit:run"]);
+	grunt.registerTask( "travis", [ "jshint", "karma:travis" ] );
+	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
+	grunt.registerTask( "build", [ "less", "cssmin", "concat", "uglify" ] );
+	grunt.registerTask( "default", [ "jshint", "build", "karma:unit:run" ] );
 };
