@@ -4,6 +4,25 @@ This [jQuery] plugin allows to conveniently display data like contributions on a
 
 ![Calendar Heat Map](https://user-images.githubusercontent.com/6181737/33098032-04143994-ceda-11e7-9a05-47dbef561a70.png)
 
+## Install
+
+### Using NPM
+
+```Bash
+npm install calendarheatmap
+```
+
+### Using bower
+
+```Bash
+bower install calendarheatmap
+```
+
+### Manual
+
++ Download the latest release from [here](https://github.com/SeBassTian23/CalendarHeatmap/releases/latest).
++ Copy the `jquery.CalendarHeatmap.js` and the `jquery.CalendarHeatmap.css` into your project. Of cause you can use the minified versions, indicated by `.min.js` and `.min.css` as well.
+
 ## Usage
 
 1. Include [jQuery] and [Moment.js] into the header of your html file:

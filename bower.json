@@ -1,11 +1,12 @@
 {
-  "name": "jquery-CalendarHeatmap",
+  "name": "calendarheatmap",
+  "version": "1.0.0",
   "license": "MIT",
   "authors": [
-    "Zeno Rocha <hi@zenorocha.com>"
+    "Sebastian Kuhlgert <sebastian.kuhlgert@gmail.com>"
   ],
-  "description": "A jump-start for jQuery plugins development.",
-  "homepage": "http://jqueryCalendarHeatmap.com",
+  "description": "A simple Calendar Heatmap for jQuery.",
+  "homepage": "https://github.com/SeBassTian23/CalendarHeatmap",
   "keywords": [
     "jquery",
     "plugin",
@@ -13,13 +14,27 @@
     "jquery-plugin",
     "jquery-CalendarHeatmap"
   ],
-  "main": "src/jquery.CalendarHeatmap.js",
+  "main": "dist/jquery.CalendarHeatmap.js",
   "dependencies": {
-    "jquery": "1"
+    "jquery": ">=1.5.1",
+    "moment": "^2.24.0"
   },
   "ignore": [
     "npm-debug.log",
-    "bower_components",
-    "node_modules"
+    "node_modules",
+    "test",
+    "src",
+    "test",
+    ".editorconfig",
+    ".gitignore",
+    ".jscsrc",
+    ".jshintrc",
+    ".npmignore",
+    ".travis.yml",
+    "bower.json",
+    "Gruntfile.js",
+    "karma.conf.json",
+    "package-lock.json",
+    "package.json"
   ]
 }
