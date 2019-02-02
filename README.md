@@ -9,13 +9,13 @@ This [jQuery] plugin allows to conveniently display data like contributions on a
 ### Using NPM
 
 ```Bash
-npm install calendarheatmap
+npm install jquery-calendar-heatmap
 ```
 
 ### Using bower
 
 ```Bash
-bower install calendarheatmap
+bower install jquery-calendar-heatmap
 ```
 
 ### Manual
