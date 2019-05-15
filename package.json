@@ -1,6 +1,6 @@
 {
   "name": "jquery-calendar-heatmap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple Calendar Heatmap for jQuery.",
   "keywords": [
     "jquery-plugin",
@@ -31,11 +31,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "jquery": ">=1.5.1",
+    "jquery": ">=3.4.0",
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "grunt": "^1.0.3",
+    "grunt": "^1.0.4",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^3.0.0",
     "grunt-contrib-jshint": "^2.0.0",
@@ -45,7 +45,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-karma": "^3.0.1",
     "jscs": "^3.0.7",
-    "karma": "^4.0.0",
+    "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-qunit": "^2.1.0",
     "qunit": "^2.9.1"
