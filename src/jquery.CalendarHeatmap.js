@@ -1,4 +1,4 @@
-;( function( $, window, document, undefined ) {
+;( function( $ ) {
 
     "use strict";
 
@@ -32,7 +32,7 @@
             };
 
         // The actual plugin constructor
-        function Plugin ( element, data, options ) {
+        function Plugin( element, data, options ) {
             this.element = element;
             this.data = data;
             this.settings = $.extend( true, {}, defaults, options );
@@ -180,6 +180,8 @@
                         var l = Math.round( i * stepWidth ) + 1;
                         var ll = Math.round( i * stepWidth + stepWidth );
                         binlabelrange.push( [ l, ll ] );
+
+                        // TODO: Fix counting issue:  && ll < maxCount
                         if ( i === ( bins - 1 ) ) {
                             l += "+";
                         } else {
@@ -322,7 +324,7 @@
                     if ( this.settings.labels.custom.monthLabels ) {
                         if ( $.type( this.settings.labels.custom.monthLabels ) === "array" ) {
                             monthName = this.settings.labels.custom.monthLabels[ month ] || "";
-                        }else {
+                        } else {
                             monthName = moment().set( { "month": month, "year": year } )
                                 .format( this.settings.labels.custom.monthLabels );
                         }
@@ -459,4 +461,4 @@
             } );
         };
 
-} )( jQuery, window, document );
+} )( jQuery );
