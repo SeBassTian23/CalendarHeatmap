@@ -57,7 +57,7 @@
                 }
             },
             parse: function() {
-
+                var arr = [];
                 var type = $.type( this.data );
                 if ( [ "array", "object" ].indexOf( type ) === -1 ) {
                     console.log( "Invalid data source" );
@@ -67,33 +67,49 @@
                         var arrtype = $.type( this.data[ 0 ] );
                         if ( arrtype === "object" ) {
                             if ( this.data[ 0 ].date && this.data[ 0 ].count ) {
-                                return this.data.slice( 0 );
+                                arr = [];
+                                for ( var h in this.data ) {
+                                    var objDate = this.data[ h ].date;
+                                    if ( $.isNumeric( this.data[ h ].date ) ) {
+                                        objDate = parseInt( this.data[ h ].date );
+                                    }
+                                    arr.push( {
+                                        "count": parseInt( this.data[ h ].count ),
+                                        "date": moment( objDate ).format( "YYYY-MM-DD" )
+                                    } );
+                                }
+                                return arr;
                             } else {
+                                    console.log( "Invalid Object format." );
                                 return null;
                             }
-                        } else if ( [ "string", "date" ].indexOf( arrtype ) > -1 ) {
+                        } else if ( [ "string", "date", "number" ].indexOf( arrtype ) > -1 ) {
                             if ( moment( this.data[ 0 ] ).isValid() ) {
                                 var obj = {};
                                 for ( var i in this.data ) {
                                     var d = moment( this.data[ i ] ).format( "YYYY-MM-DD" );
+                                    console.log( d );
                                     if ( !obj[ d ] ) {
                                         obj[ d ] = 1;
                                     } else {
                                         obj[ d ] += 1;
                                     }
                                 }
-                                var arr = [];
+                                console.log( obj );
+                                arr = [];
                                 for ( var j in obj ) {
                                     arr.push( {
-                                        "count": obj[ j ],
+                                        "count": parseInt( obj[ j ] ),
                                         "date": j
                                     } );
                                 }
                                 return arr;
                             } else {
+                                console.log( "Invalid Date format." );
                                 return null;
                             }
                         } else {
+                            console.log( "Invalid format." );
                             return null;
                         }
                     } else if ( type === "array" && this.data.length === 0 ) {
@@ -105,13 +121,14 @@
                                 var data = [];
                                 for ( var k in this.data ) {
                                     data.push( {
-                                        "count": this.data[ k ],
+                                        "count": parseInt( this.data[ k ] ),
                                         "date": moment( k ).format( "YYYY-MM-DD" )
                                     } );
                                 }
                                 return data;
                             }
                         } else {
+                            console.log( "Invalid Date format." );
                             return null;
                         }
                     } else {
