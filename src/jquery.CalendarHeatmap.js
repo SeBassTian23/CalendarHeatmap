@@ -19,6 +19,9 @@
                         monthLabels: null
                     }
                 },
+                tiles: {
+                    shape: "square"
+                },
                 legend: {
                     show: true,
                     align: "right",
@@ -307,6 +310,11 @@
 
                 // Add labels
                 this.addWeekColumn();
+
+                // Adjust tile shape
+                if ( this.settings.tiles.shape && this.settings.tiles.shape !== "square" ) {
+                    $( this.element ).addClass( " ch-" + this.settings.tiles.shape );
+                }
 
                 // Start building the months
                 for ( i = months; i > 0; i-- ) {
