@@ -229,6 +229,9 @@
                     return null;
                 }
             },
+            futureDate: function( str ) {
+                return moment( str ).diff( moment(), "days" ) > 0 ? true : false;
+            },
             addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
                     $( ".ch-year", this.element )
@@ -361,7 +364,10 @@
                         var str = year + "-" + this.pad( ( month + 1 ), 2 );
                         str += "-" + this.pad( ( j + 1 ), 2 );
                         var obj = this.matchDate( events, str );
-
+                        var future = "";
+                        if ( this.futureDate( str ) ) {
+                            future = " is-after-today";
+                        }
                         if ( obj ) {
                             var title = obj.count + " on ";
                             title += moment( obj.date ).format( "ll" );
@@ -382,7 +388,7 @@
 
                         } else {
                             $( "<div/>", {
-                                "class": "ch-day"
+                                "class": "ch-day" + future
                             } ).appendTo(
                                 $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
                             );
