@@ -221,7 +221,9 @@
                 } ) || null;
             },
             futureDate: function( str ) {
-                return moment( str ).diff( moment(), "days" ) > 0 ? true : false;
+                return moment( str ).diff( moment(), "days" ) >= 0 &&
+                moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
+                true : false;
             },
             addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
