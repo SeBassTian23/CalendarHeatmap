@@ -107,7 +107,14 @@
 			}
 		});
 
-		$("#heatmap-4").CalendarHeatmap( [], {
+		$("#heatmap-4").CalendarHeatmap( data, {
+			title: "Tile shape \"Circle\"",
+			tiles: {
+				shape: "circle"
+			}
+		});
+
+		$("#heatmap-5").CalendarHeatmap( [], {
 			title: "No Data"
 		});
 	</script>
