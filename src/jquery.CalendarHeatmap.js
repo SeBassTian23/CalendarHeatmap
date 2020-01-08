@@ -246,7 +246,7 @@
                             .append( "<div class=\"ch-month-label\">&nbsp;</div>" );
                     }
 
-                    var swd = this.settings.weekStartDay || 1;
+                    var swd = this.settings.weekStartDay;
 
                     for ( var i = 0; i < 7; i++ ) {
 
