@@ -87,7 +87,7 @@
 		});
 
 		$("#heatmap-3").CalendarHeatmap(data, {
-			title: "Gradient \"electric\", labels days and custom month labels, end one year from current",
+			title: "Gradient \"electric\", labels days and custom month labels, end one year from current, week starts on Sunday",
 			months: 5,
 			lastYear: moment().subtract(1,'years').year(),
 			coloring: "electric",
@@ -95,6 +95,7 @@
 				align: "left",
 				minLabel: "Fewer"
 			},
+			weekStartDay: 0,
 			labels: {
 				days: true,
 				custom: {
