@@ -119,12 +119,6 @@
                     }
                 }
             },
-            index: function( data ) {
-                this.idx = {};
-                for ( var i in data ) {
-                    this.idx[ data[ i ].date ] = i;
-                }
-            },
             pad: function( str, max ) {
                 str = String( str );
                 return str.length < max ? this.pad( "0" + str, max ) : str;
@@ -222,12 +216,9 @@
                 return 0;
             },
             matchDate: function( obj, key ) {
-
-                if ( this.idx[ key ] ) {
-                    return obj[ this.idx[ key ] ];
-                } else {
-                    return null;
-                }
+                return obj.find( function( x ) {
+                    return x.date === key;
+                } ) || null;
             },
             futureDate: function( str ) {
                 return moment( str ).diff( moment(), "days" ) > 0 ? true : false;
@@ -281,9 +272,6 @@
                 if ( $.type( data ) !== "array" ) {
                     return;
                 }
-
-                // Generate lookup index
-                this.index( data );
 
                 var calc = this.calculateBins( data );
                 var events = calc.events;
