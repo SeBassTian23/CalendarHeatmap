@@ -28,7 +28,7 @@ bower install jquery-calendar-heatmap
 1. Include [jQuery] and [Moment.js] into the header of your html file:
 
     ```html
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     ```
 
@@ -47,7 +47,7 @@ bower install jquery-calendar-heatmap
 ## Data
 
 The provided date needs to be a valid [date format] that can be interpreted by [Moment.js].
-The date needs to provide at least year month and day, e.g. `YYYY-MM-DD`.
+The date needs to provide at least with year month and day, e.g. `YYYY-MM-DD` or as a unix timestamp e.g. `1578518342658`.
 
 ```JavaScript
 // Provide dates as an array of objects.
@@ -84,6 +84,9 @@ The Calendar Heat Map can be modified using the following options:
             monthLabels: null
         }
     },
+    tiles: {
+        shape: "square"
+    }
     legend: {
         show: true,
         align: "right",
@@ -126,6 +129,7 @@ There is a set of different color gradients available. By default `standard` is 
 The following gradients are available based of [Matplotlib] for Python: `blue`, `earth`, `electric`, `green`, `picknick`, `red`, `teal`, `standard`, `viridis`. If you want to define your own color gradient, use `custom` and add the classes defining the colors to your css stylesheet as described below.
 
 #### Custom Gradient
+
 Just add the colors to be used for the 4 steps as in the example. In this case the name set for `coloring` would be the base class name `custom`.
 
 ```css
@@ -162,6 +166,16 @@ labels: {
 }
 ```
 
+### `tiles`
+
+By default, the shape of each day tile is `square`. Further the shapes `rounded` and `circle` are available.
+
+```JavaScript
+tiles: {
+    shape: "square"
+}
+```
+
 ### `legend`
 
 The legend for the calendar heatmap is located below the heatmap and visible by default. The visibility can be set by setting `show` to `true` or `false`. Set the alignment using `align`. Options are `right`, `center` or `left`. Labels for min and max can be set using `minLabel` and `maxLabel`. Use `null` to hide the labels.
@@ -177,14 +191,15 @@ legend: {
 
 ### `tooltips`
 
-Tooltips require the [Bootstrap] library. Regardless of using the library, the tiles with representing data counts have a title element with count and date. This example is using `Bootstrap 3.3.7` which is deprecated, but will work with `Bootstrap 4.1.3` as well.
+Tooltips require the [Bootstrap] library. Regardless of using the library, the tiles with representing data counts have a title element with count and date. This example is using `Bootstrap 4.x`, but the plugin will work with `Bootstrap 3.x` as well.
 
 ```html
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 ```
 
 To enable the tooltips just set `show` to `true`. By default it is set to `false`. All settings for tooltips are available as [documented][tooltip-documentation] and can be passed on using `options`.
@@ -202,5 +217,5 @@ This plugin is based on the [jQuery Boilerplate](https://github.com/jquery-boile
 [date format]: https://momentjs.com/docs/#/parsing/string/
 [jQuery]: https://jquery.com/
 [Bootstrap]: https://getbootstrap.com/
-[tooltip-documentation]: https://getbootstrap.com/docs/3.3/javascript/#tooltips
+[tooltip-documentation]: https://getbootstrap.com/docs/4.4/components/tooltips/
 [Matplotlib]: https://matplotlib.org/tutorials/colors/colormaps.html?highlight=gradients#miscellaneous
