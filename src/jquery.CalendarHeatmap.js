@@ -143,18 +143,18 @@
             calculateBins: function( events ) {
 
                 // Calculate bins for events
-                var arr = [];
                 var i;
                 var bins = this.settings.steps || 4;
                 var binlabels = [ "0" ];
                 var binlabelrange = [ [ 0, 0 ] ];
-                for ( i in events ) {
-                    events[ i ].count = parseInt( events[ i ].count );
-                    arr.push( events[ i ].count );
-                }
-                var firstStep = Math.min.apply( Math, arr );
+
+                var arr = events.map( function( x ) {
+                    return parseInt( x.count );
+                } );
+
+                var minCount = Math.min.apply( Math, arr );
                 var maxCount = Math.max.apply( Math, arr );
-                var stepWidth = ( maxCount - firstStep ) / bins;
+                var stepWidth = ( maxCount - minCount ) / bins;
 
                 if ( stepWidth === 0 ) {
                     stepWidth = maxCount / bins;
@@ -165,7 +165,7 @@
 
                 // Generate bin labels
                 for ( i = 0; i < bins; i++ ) {
-                    if ( !isFinite( firstStep ) ) {
+                    if ( !isFinite( minCount ) ) {
                         binlabels.push( "" );
                         binlabelrange.push( [ null, null ] );
                     } else if ( maxCount < bins ) {
@@ -182,7 +182,7 @@
                     } else if ( maxCount === bins ) {
                         binlabels.push( String( ( i + 1 ) ) );
                         binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
-                    } else if ( ( maxCount - 2 ) === bins ) {
+                    } else if ( ( maxCount / 2 ) < bins ) {
                         if ( ( i + 1 ) === bins ) {
                             binlabels.push( String( ( i + 1 ) ) + "+" );
                             binlabelrange.push( [ ( i + 1 ), null ] );
@@ -191,8 +191,11 @@
                             binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
                         }
                     } else {
-                        var l = Math.round( i * stepWidth ) + 1;
-                        var ll = Math.round( i * stepWidth + stepWidth );
+                        var l = Math.ceil( i * stepWidth ) + 1;
+                        var ll = Math.ceil( i * stepWidth + stepWidth );
+                        if ( i === ( bins - 1 ) ) {
+                            ll = maxCount;
+                        }
                         binlabelrange.push( [ l, ll ] );
 
                         // TODO: Fix counting issue:  && ll < maxCount
@@ -213,9 +216,9 @@
 
                     if ( events[ i ].count === 0 ) {
                         events[ i ].level = 0;
-                    } else if ( events[ i ].count - firstStep === 0 ) {
+                    } else if ( events[ i ].count - minCount === 0 ) {
                         events[ i ].level = 1;
-                    } else if ( !isFinite( firstStep ) ) {
+                    } else if ( !isFinite( minCount ) ) {
                         events[ i ].level = bins;
                     } else {
                         events[ i ].level = this.matchBin( binlabelrange, events[ i ].count );
