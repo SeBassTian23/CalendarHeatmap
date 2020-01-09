@@ -15,7 +15,7 @@ module.exports = function( config ) {
     files: [
       "node_modules/jquery/dist/jquery.js",
       "node_modules/moment/min/moment.min.js",
-      "dist/jquery.CalendarHeatmap.js",
+      "src/jquery.CalendarHeatmap.js",
       "test/setup.js",
       "test/spec/*"
     ],
@@ -50,7 +50,7 @@ module.exports = function( config ) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [ "Chrome" ],
+    browsers: [ "Chrome", "Safari" ],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

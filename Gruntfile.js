@@ -39,10 +39,10 @@ module.exports = function( grunt ) {
 			}
 		},
 
-		jscs: {
-			src: "src/**/*.js",
+		eslint: {
+			all: [ "src/**/*.js" ],
 			options: {
-				config: ".jscsrc"
+				config: ".eslintrc.json"
 			}
 		},
 
@@ -81,9 +81,10 @@ module.exports = function( grunt ) {
 		karma: {
 			unit: {
 				configFile: "karma.conf.js",
-				background: true,
+				background: false,
 				singleRun: false,
-				browsers: [ "Chrome" ]
+				autoWatch: true,
+				browsers: [ "Chrome", "Safari" ]
 			},
 
 			//continuous integration mode: run tests once in PhantomJS browser.
@@ -106,7 +107,7 @@ module.exports = function( grunt ) {
 
 	grunt.loadNpmTasks( "grunt-contrib-concat" );
 	grunt.loadNpmTasks( "grunt-contrib-jshint" );
-	grunt.loadNpmTasks( "grunt-jscs" );
+	grunt.loadNpmTasks( "grunt-eslint" );
 	grunt.loadNpmTasks( "grunt-contrib-uglify" );
 	grunt.loadNpmTasks( "grunt-contrib-less" );
 	grunt.loadNpmTasks( "grunt-contrib-cssmin" );
@@ -114,7 +115,7 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks( "grunt-karma" );
 
 	grunt.registerTask( "travis", [ "jshint", "karma:travis" ] );
-	grunt.registerTask( "lint", [ "jshint", "jscs" ] );
+	grunt.registerTask( "lint", [ "jshint", "jscs", "eslint" ] );
 	grunt.registerTask( "build", [ "less", "cssmin", "concat", "uglify" ] );
 	grunt.registerTask( "default", [ "jshint", "build", "karma:unit:run" ] );
 };

@@ -16,7 +16,7 @@
   ],
   "main": "dist/jquery.CalendarHeatmap.js",
   "dependencies": {
-    "jquery": ">=1.5.1",
+    "jquery": "^3.4.1",
     "moment": "^2.24.0"
   },
   "ignore": [
@@ -27,7 +27,7 @@
     "test",
     ".editorconfig",
     ".gitignore",
-    ".jscsrc",
+    ".eslintrc.json",
     ".jshintrc",
     ".npmignore",
     ".travis.yml",

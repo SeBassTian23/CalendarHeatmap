@@ -28,13 +28,13 @@
 
 	QUnit.test( "returns jQuery functions after called (chaining)", function( assert ) {
 		assert.equal(
-			typeof $fixture.CalendarHeatmap().on,
+			typeof $fixture.CalendarHeatmap([]).on,
 			"function",
 			"'on' function must exist after plugin call" );
 	} );
 
 	QUnit.test( "caches plugin instance", function( assert ) {
-		$fixture.CalendarHeatmap();
+		$fixture.CalendarHeatmap([]);
 		assert.ok(
 			$fixture.data( "plugin_CalendarHeatmap" ),
 			"has cached it into a jQuery data"

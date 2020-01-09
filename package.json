@@ -31,28 +31,30 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "jquery": ">=3.4.0",
+    "jquery": "^3.4.1",
     "moment": "^2.24.0"
   },
   "devDependencies": {
+    "eslint-config-jquery": "^2.0.0",
     "grunt": "^1.0.4",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-jshint": "^2.0.0",
+    "grunt-contrib-jshint": "^2.1.0",
     "grunt-contrib-less": "^2.0.0",
-    "grunt-contrib-uglify": "^4.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-jscs": "^3.0.1",
-    "grunt-karma": "^3.0.1",
-    "jscs": "^3.0.7",
-    "karma": "^4.1.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-qunit": "^2.1.0",
-    "qunit": "^2.9.1"
+    "grunt-eslint": "^22.0.0",
+    "grunt-karma": "^3.0.2",
+    "karma": "^4.4.1",
+    "karma-brave-launcher": "^1.0.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-qunit": "^4.0.0",
+    "karma-safari-launcher": "^1.0.0",
+    "qunit": "^2.9.3"
   },
   "scripts": {
-    "jscs": "jscs src",
-    "test": "npm run jscs && grunt travis --verbose",
+    "test": "grunt eslint && grunt travis --verbose",
+    "prebuild": "npm run test",
     "build": "grunt build"
   }
 }

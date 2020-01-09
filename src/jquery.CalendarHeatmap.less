@@ -1,5 +1,5 @@
 @day-background: #c8d7e1;
-@day-bg-future: #d9e3ea;
+@day-bg-future: lighten(#c8d7e1, 10%);
 @day-border: #ffffff;
 
 // Earth
@@ -59,6 +59,18 @@
 .ch {
     display: table !important;
     clear: both;
+}
+
+.ch-rounded {
+    & .ch-day, & .ch-lvl {
+        border-radius: 35%;
+    }
+}
+
+.ch-circle {
+    & .ch-day, & .ch-lvl {
+        border-radius: 100%;
+    }
 }
 
 .ch-month, .ch-week-labels {

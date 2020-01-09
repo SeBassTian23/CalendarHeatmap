@@ -1,0 +1,11 @@
+{
+  "extends": "jquery",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "moment": "readonly",
+    "jQuery": "readonly"
+  }
+}
