@@ -15,7 +15,7 @@ module.exports = function( config ) {
     files: [
       "node_modules/jquery/dist/jquery.js",
       "node_modules/moment/min/moment.min.js",
-      "dist/jquery.CalendarHeatmap.js",
+      "src/jquery.CalendarHeatmap.js",
       "test/setup.js",
       "test/spec/*"
     ],
