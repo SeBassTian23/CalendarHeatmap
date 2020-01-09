@@ -1,12 +1,12 @@
 /*
- *  jquery-calendar-heatmap - v1.0.1
+ *  jquery-calendar-heatmap - v1.1.0
  *  A simple Calendar Heatmap for jQuery.
  *  https://github.com/SeBassTian23/CalendarHeatmap
  *
  *  Made by Sebastian Kuhlgert
  *  Under MIT License
  */
-;( function( $, window, document, undefined ) {
+;( function( $ ) {
 
     "use strict";
 
@@ -27,6 +27,9 @@
                         monthLabels: null
                     }
                 },
+                tiles: {
+                    shape: "square"
+                },
                 legend: {
                     show: true,
                     align: "right",
@@ -40,7 +43,7 @@
             };
 
         // The actual plugin constructor
-        function Plugin ( element, data, options ) {
+        function Plugin( element, data, options ) {
             this.element = element;
             this.data = data;
             this.settings = $.extend( true, {}, defaults, options );
@@ -62,7 +65,7 @@
                 }
             },
             parse: function() {
-
+                var arr = [];
                 var type = $.type( this.data );
                 if ( [ "array", "object" ].indexOf( type ) === -1 ) {
                     console.log( "Invalid data source" );
@@ -72,33 +75,49 @@
                         var arrtype = $.type( this.data[ 0 ] );
                         if ( arrtype === "object" ) {
                             if ( this.data[ 0 ].date && this.data[ 0 ].count ) {
-                                return this.data.slice( 0 );
+                                arr = [];
+                                for ( var h in this.data ) {
+                                    var objDate = this.data[ h ].date;
+                                    if ( $.isNumeric( this.data[ h ].date ) ) {
+                                        objDate = parseInt( this.data[ h ].date );
+                                    }
+                                    arr.push( {
+                                        "count": parseInt( this.data[ h ].count ),
+                                        "date": moment( objDate ).format( "YYYY-MM-DD" )
+                                    } );
+                                }
+                                return arr;
                             } else {
+                                    console.log( "Invalid Object format." );
                                 return null;
                             }
-                        } else if ( [ "string", "date" ].indexOf( arrtype ) > -1 ) {
+                        } else if ( [ "string", "date", "number" ].indexOf( arrtype ) > -1 ) {
                             if ( moment( this.data[ 0 ] ).isValid() ) {
                                 var obj = {};
                                 for ( var i in this.data ) {
                                     var d = moment( this.data[ i ] ).format( "YYYY-MM-DD" );
+                                    console.log( d );
                                     if ( !obj[ d ] ) {
                                         obj[ d ] = 1;
                                     } else {
                                         obj[ d ] += 1;
                                     }
                                 }
-                                var arr = [];
+                                console.log( obj );
+                                arr = [];
                                 for ( var j in obj ) {
                                     arr.push( {
-                                        "count": obj[ j ],
+                                        "count": parseInt( obj[ j ] ),
                                         "date": j
                                     } );
                                 }
                                 return arr;
                             } else {
+                                console.log( "Invalid Date format." );
                                 return null;
                             }
                         } else {
+                            console.log( "Invalid format." );
                             return null;
                         }
                     } else if ( type === "array" && this.data.length === 0 ) {
@@ -110,24 +129,19 @@
                                 var data = [];
                                 for ( var k in this.data ) {
                                     data.push( {
-                                        "count": this.data[ k ],
+                                        "count": parseInt( this.data[ k ] ),
                                         "date": moment( k ).format( "YYYY-MM-DD" )
                                     } );
                                 }
                                 return data;
                             }
                         } else {
+                            console.log( "Invalid Date format." );
                             return null;
                         }
                     } else {
                         return null;
                     }
-                }
-            },
-            index: function( data ) {
-                this.idx = {};
-                for ( var i in data ) {
-                    this.idx[ data[ i ].date ] = i;
                 }
             },
             pad: function( str, max ) {
@@ -137,18 +151,18 @@
             calculateBins: function( events ) {
 
                 // Calculate bins for events
-                var arr = [];
                 var i;
                 var bins = this.settings.steps || 4;
                 var binlabels = [ "0" ];
                 var binlabelrange = [ [ 0, 0 ] ];
-                for ( i in events ) {
-                    events[ i ].count = parseInt( events[ i ].count );
-                    arr.push( events[ i ].count );
-                }
-                var firstStep = Math.min.apply( Math, arr );
+
+                var arr = events.map( function( x ) {
+                    return parseInt( x.count );
+                } );
+
+                var minCount = Math.min.apply( Math, arr );
                 var maxCount = Math.max.apply( Math, arr );
-                var stepWidth = ( maxCount - firstStep ) / bins;
+                var stepWidth = ( maxCount - minCount ) / bins;
 
                 if ( stepWidth === 0 ) {
                     stepWidth = maxCount / bins;
@@ -159,7 +173,7 @@
 
                 // Generate bin labels
                 for ( i = 0; i < bins; i++ ) {
-                    if ( !isFinite( firstStep ) ) {
+                    if ( !isFinite( minCount ) ) {
                         binlabels.push( "" );
                         binlabelrange.push( [ null, null ] );
                     } else if ( maxCount < bins ) {
@@ -176,7 +190,7 @@
                     } else if ( maxCount === bins ) {
                         binlabels.push( String( ( i + 1 ) ) );
                         binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
-                    } else if ( ( maxCount - 2 ) === bins ) {
+                    } else if ( ( maxCount / 2 ) < bins ) {
                         if ( ( i + 1 ) === bins ) {
                             binlabels.push( String( ( i + 1 ) ) + "+" );
                             binlabelrange.push( [ ( i + 1 ), null ] );
@@ -185,9 +199,14 @@
                             binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
                         }
                     } else {
-                        var l = Math.round( i * stepWidth ) + 1;
-                        var ll = Math.round( i * stepWidth + stepWidth );
+                        var l = Math.ceil( i * stepWidth ) + 1;
+                        var ll = Math.ceil( i * stepWidth + stepWidth );
+                        if ( i === ( bins - 1 ) ) {
+                            ll = maxCount;
+                        }
                         binlabelrange.push( [ l, ll ] );
+
+                        // TODO: Fix counting issue:  && ll < maxCount
                         if ( i === ( bins - 1 ) ) {
                             l += "+";
                         } else {
@@ -205,9 +224,9 @@
 
                     if ( events[ i ].count === 0 ) {
                         events[ i ].level = 0;
-                    } else if ( events[ i ].count - firstStep === 0 ) {
+                    } else if ( events[ i ].count - minCount === 0 ) {
                         events[ i ].level = 1;
-                    } else if ( !isFinite( firstStep ) ) {
+                    } else if ( !isFinite( minCount ) ) {
                         events[ i ].level = bins;
                     } else {
                         events[ i ].level = this.matchBin( binlabelrange, events[ i ].count );
@@ -225,12 +244,14 @@
                 return 0;
             },
             matchDate: function( obj, key ) {
-
-                if ( this.idx[ key ] ) {
-                    return obj[ this.idx[ key ] ];
-                } else {
-                    return null;
-                }
+                return obj.find( function( x ) {
+                    return x.date === key;
+                } ) || null;
+            },
+            futureDate: function( str ) {
+                return moment( str ).diff( moment(), "days" ) >= 0 &&
+                moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
+                true : false;
             },
             addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
@@ -249,7 +270,7 @@
                             .append( "<div class=\"ch-month-label\">&nbsp;</div>" );
                     }
 
-                    var swd = this.settings.weekStartDay || 1;
+                    var swd = this.settings.weekStartDay;
 
                     for ( var i = 0; i < 7; i++ ) {
 
@@ -282,9 +303,6 @@
                     return;
                 }
 
-                // Generate lookup index
-                this.index( data );
-
                 var calc = this.calculateBins( data );
                 var events = calc.events;
                 var binLabels = calc.bins;
@@ -314,6 +332,11 @@
                 // Add labels
                 this.addWeekColumn();
 
+                // Adjust tile shape
+                if ( this.settings.tiles.shape && this.settings.tiles.shape !== "square" ) {
+                    $( this.element ).addClass( " ch-" + this.settings.tiles.shape );
+                }
+
                 // Start building the months
                 for ( i = months; i > 0; i-- ) {
 
@@ -330,7 +353,7 @@
                     if ( this.settings.labels.custom.monthLabels ) {
                         if ( $.type( this.settings.labels.custom.monthLabels ) === "array" ) {
                             monthName = this.settings.labels.custom.monthLabels[ month ] || "";
-                        }else {
+                        } else {
                             monthName = moment().set( { "month": month, "year": year } )
                                 .format( this.settings.labels.custom.monthLabels );
                         }
@@ -359,7 +382,10 @@
                         var str = year + "-" + this.pad( ( month + 1 ), 2 );
                         str += "-" + this.pad( ( j + 1 ), 2 );
                         var obj = this.matchDate( events, str );
-
+                        var future = "";
+                        if ( this.futureDate( str ) ) {
+                            future = " is-after-today";
+                        }
                         if ( obj ) {
                             var title = obj.count + " on ";
                             title += moment( obj.date ).format( "ll" );
@@ -380,7 +406,7 @@
 
                         } else {
                             $( "<div/>", {
-                                "class": "ch-day"
+                                "class": "ch-day" + future
                             } ).appendTo(
                                 $( ".ch-month:last .ch-weeks .ch-week:last", this.element )
                             );
@@ -467,4 +493,4 @@
             } );
         };
 
-} )( jQuery, window, document );
+} )( jQuery );

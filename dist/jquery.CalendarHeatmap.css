@@ -1,5 +1,5 @@
 /*
- *  jquery-calendar-heatmap - v1.0.1
+ *  jquery-calendar-heatmap - v1.1.0
  *  A simple Calendar Heatmap for jQuery.
  *  https://github.com/SeBassTian23/CalendarHeatmap
  *
@@ -9,6 +9,14 @@
 .ch {
   display: table !important;
   clear: both;
+}
+.ch-rounded .ch-day,
+.ch-rounded .ch-lvl {
+  border-radius: 35%;
+}
+.ch-circle .ch-day,
+.ch-circle .ch-lvl {
+  border-radius: 100%;
 }
 .ch-month,
 .ch-week-labels {
@@ -62,7 +70,7 @@
 }
 .ch-day.is-after-today,
 .ch-lvl.is-after-today {
-  background-color: #d9e3ea;
+  background-color: #e9eff3;
 }
 .ch-day.lvl-1,
 .ch-lvl.lvl-1 {
