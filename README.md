@@ -21,7 +21,7 @@ bower install jquery-calendar-heatmap
 ### Manual
 
 + Download the latest release from [here](https://github.com/SeBassTian23/CalendarHeatmap/releases/latest).
-+ Copy the `jquery.CalendarHeatmap.js` and the `jquery.CalendarHeatmap.css` into your project. Of cause you can use the minified versions, indicated by `.min.js` and `.min.css` as well.
++ Copy the `jquery.CalendarHeatmap.js` and the `jquery.CalendarHeatmap.css` into your project. Of course you can use the minified versions indicated by `.min.js` and `.min.css` as well.
 
 ## Usage
 
