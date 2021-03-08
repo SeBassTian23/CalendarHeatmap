@@ -58,23 +58,22 @@
             },
             parse: function() {
                 var arr = [];
-                var type = $.type( this.data );
-                if ( [ "array", "object" ].indexOf( type ) === -1 ) {
+                if ( !Array.isArray( dates ) || typeof dates !== "object" ) {
                     console.log( "Invalid data source" );
                     return null;
                 } else {
-                    if ( type === "array" && this.data.length > 0 ) {
-                        var arrtype = $.type( this.data[ 0 ] );
-                        if ( arrtype === "object" ) {
-                            if ( this.data[ 0 ].date && this.data[ 0 ].count ) {
+                    if ( Array.isArray( dates ) && dates.length > 0 ) {
+                        var arrtype = typeof dates[ 0 ];
+                        if ( typeof dates[ 0 ] === "object" && !Array.isArray( dates[ 0 ] ) ) {
+                            if ( dates[ 0 ].date && dates[ 0 ].count ) {
                                 arr = [];
-                                for ( var h in this.data ) {
-                                    var objDate = this.data[ h ].date;
-                                    if ( $.isNumeric( this.data[ h ].date ) ) {
-                                        objDate = parseInt( this.data[ h ].date );
+                                for ( var h in dates ) {
+                                    var objDate = dates[ h ].date;
+                                    if ( $.isNumeric( dates[ h ].date ) ) {
+                                        objDate = parseInt( dates[ h ].date );
                                     }
                                     arr.push( {
-                                        "count": parseInt( this.data[ h ].count ),
+                                        "count": parseInt( dates[ h ].count ),
                                         "date": moment( objDate ).format( "YYYY-MM-DD" )
                                     } );
                                 }
@@ -84,18 +83,16 @@
                                 return null;
                             }
                         } else if ( [ "string", "date", "number" ].indexOf( arrtype ) > -1 ) {
-                            if ( moment( this.data[ 0 ] ).isValid() ) {
+                            if ( moment( dates[ 0 ] ).isValid() ) {
                                 var obj = {};
-                                for ( var i in this.data ) {
-                                    var d = moment( this.data[ i ] ).format( "YYYY-MM-DD" );
-                                    console.log( d );
+                                for ( var i in dates ) {
+                                    var d = moment( dates[ i ] ).format( "YYYY-MM-DD" );
                                     if ( !obj[ d ] ) {
                                         obj[ d ] = 1;
                                     } else {
                                         obj[ d ] += 1;
                                     }
                                 }
-                                console.log( obj );
                                 arr = [];
                                 for ( var j in obj ) {
                                     arr.push( {
@@ -112,16 +109,16 @@
                             console.log( "Invalid format." );
                             return null;
                         }
-                    } else if ( type === "array" && this.data.length === 0 ) {
+                    } else if ( Array.isArray( dates ) && dates.length === 0 ) {
                         return [];
-                    } else if ( type === "object" && !Object.empty( this.data ) ) {
-                        var keys = Object.keys( this.data );
+                    } else if ( typeof dates === "object" && !Object.empty( dates ) ) {
+                        var keys = Object.keys( dates );
                         if ( moment( keys[ 0 ] ).isValid() ) {
-                            if ( $.type( this.data[ keys[ 0 ] ] ) === "number" ) {
+                            if ( this._isNumeric( dates[ keys[ 0 ] ] ) ) {
                                 var data = [];
-                                for ( var k in this.data ) {
+                                for ( var k in dates ) {
                                     data.push( {
-                                        "count": parseInt( this.data[ k ] ),
+                                        "count": parseInt( dates[ k ] ),
                                         "date": moment( k ).format( "YYYY-MM-DD" )
                                     } );
                                 }
@@ -273,9 +270,9 @@
                         var dayNumber = moment().weekday( ( i + swd ) ).format( "d" );
                         if ( ( i - 1 ) % 2 ) {
                             var wdl = this.settings.labels.custom.weekDayLabels;
-                            if ( $.type( wdl ) === "array" ) {
+                            if ( Array.isArray( wdl ) ) {
                                 dayName = wdl[ dayNumber ] || "";
-                            } else if ( $.type( wdl ) === "string" ) {
+                            } else if ( typeof wdl === "string" ) {
                                 dayName = moment().weekday( ( i + swd ) )
                                 .format( wdl );
                             }
@@ -294,7 +291,7 @@
 
                 var data = this.parse();
 
-                if ( $.type( data ) !== "array" ) {
+                if ( !Array.isArray( data ) ) {
                     return;
                 }
 
@@ -346,7 +343,7 @@
                     var monthName = moment().set( { "month": month, "year": year } )
                     .format( "MMM" );
                     if ( this.settings.labels.custom.monthLabels ) {
-                        if ( $.type( this.settings.labels.custom.monthLabels ) === "array" ) {
+                        if ( Array.isArray( this.settings.labels.custom.monthLabels ) ) {
                             monthName = this.settings.labels.custom.monthLabels[ month ] || "";
                         } else {
                             monthName = moment().set( { "month": month, "year": year } )
