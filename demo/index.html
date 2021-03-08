@@ -4,7 +4,7 @@
 <head>
 	<title>jQuery Calendar Heatmap</title>
 	<link rel="stylesheet" type="text/css" href="../dist/jquery.CalendarHeatmap.min.css">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 	<style type="text/css">
 	body {
 		font-family:Arial, Helvetica, sans-serif;
@@ -14,9 +14,9 @@
 		font-size: 18px;
 	}
 	</style>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 	<script src="../dist/jquery.CalendarHeatmap.min.js"></script>
 </head>
@@ -56,10 +56,10 @@
 		</div>
 		<div class="row my-4">
 			<div class="col">
-				<h3>Update the Calendar Heatmap</h3>
-				<button class="btn btn-secondary btn-sm" id="heatmap-5-random">Random Data</button>
+				<h3>Update the above Calendar Heatmap</h3>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-random">Random Dates</button>
 				<button class="btn btn-secondary btn-sm" id="heatmap-5-empty">Empty</button>
-				<button class="btn btn-secondary btn-sm" id="heatmap-5-append">Append Data</button>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-append">Append Dates</button>
 				<button class="btn btn-secondary btn-sm" id="heatmap-5-wkday">Toggle Weekdays</button>
 				<select class="form-control" style="display:inline; width:auto; margin-top:2px;" size="1" id="heatmap-5-coloring" >
 					<option value="standard">Default (standard)</option>
@@ -90,7 +90,9 @@
 			});
 		}
 
-		$("#heatmap-1").CalendarHeatmap(data, {});
+		$("#heatmap-1").CalendarHeatmap(data, {
+			title: "Default Layout"
+		});
 
 		$("#heatmap-2").CalendarHeatmap(data, {
 			title: "Gradient \"red\", end one month from current",
