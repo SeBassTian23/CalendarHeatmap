@@ -56,7 +56,7 @@
                     console.log( "The calendar heatmap plugin requires moment.js" );
                 }
             },
-            parse: function() {
+            _parse: function( dates ) {
                 var arr = [];
                 if ( !Array.isArray( dates ) || typeof dates !== "object" ) {
                     console.log( "Invalid data source" );
@@ -133,11 +133,11 @@
                     }
                 }
             },
-            pad: function( str, max ) {
+            _pad: function( str, max ) {
                 str = String( str );
-                return str.length < max ? this.pad( "0" + str, max ) : str;
+                return str.length < max ? this._pad( "0" + str, max ) : str;
             },
-            calculateBins: function( events ) {
+            _calculateBins: function( events ) {
 
                 // Calculate bins for events
                 var i;
@@ -224,7 +224,7 @@
 
                 return { events: events, bins: binlabels };
             },
-            matchBin: function( range, value ) {
+            _matchBin: function( range, value ) {
                 for ( var r in range ) {
                     if ( value >= range[ r ][ 0 ] && value <= range[ r ][ 1 ] ) {
                         return r;
@@ -232,12 +232,12 @@
                 }
                 return 0;
             },
-            matchDate: function( obj, key ) {
+            _matchDate: function( obj, key ) {
                 return obj.find( function( x ) {
                     return x.date === key;
                 } ) || null;
             },
-            futureDate: function( str ) {
+            _futureDate: function( str ) {
                 return moment( str ).diff( moment(), "days" ) >= 0 &&
                 moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
                 true : false;
@@ -289,13 +289,14 @@
             },
             calendarHeatmap: function( ) {
 
-                var data = this.parse();
+                var data = this._parse( this.data );
 
                 if ( !Array.isArray( data ) ) {
                     return;
                 }
 
-                var calc = this.calculateBins( data );
+                this.data = data;
+                var calc = this._calculateBins( data );
                 var events = calc.events;
                 var binLabels = calc.bins;
                 var currMonth = this.settings.lastMonth;
@@ -322,7 +323,7 @@
                     .append( "<div class=\"ch-year\"></div>" );
 
                 // Add labels
-                this.addWeekColumn();
+                this._addWeekColumn();
 
                 // Adjust tile shape
                 if ( this.settings.tiles.shape && this.settings.tiles.shape !== "square" ) {
@@ -371,11 +372,11 @@
                     // Week day counter
                     var wc = 0;
                     for ( var j = 0; j < days; j++ ) {
-                        var str = year + "-" + this.pad( ( month + 1 ), 2 );
-                        str += "-" + this.pad( ( j + 1 ), 2 );
-                        var obj = this.matchDate( events, str );
+                        var str = year + "-" + this._pad( ( month + 1 ), 2 );
+                        str += "-" + this._pad( ( j + 1 ), 2 );
+                        var obj = this._matchDate( events, str );
                         var future = "";
-                        if ( this.futureDate( str ) ) {
+                        if ( this._futureDate( str ) ) {
                             future = " is-after-today";
                         }
                         if ( obj ) {
