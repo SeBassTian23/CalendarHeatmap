@@ -450,6 +450,34 @@
                     $( "[data-toggle=\"tooltip\"]", this.element )
                     .tooltip( this.settings.tooltips.options );
                 }
+            },
+            updateData: function( arr ) {
+                this.data = arr;
+                this.calendarHeatmap();
+            },
+            appendData: function( arr ) {
+                var toAppend =  this._parse( arr );
+                if ( Array.isArray( toAppend ) && Array.isArray( this.data ) ) {
+                    for ( var i in toAppend ) {
+                        var  idx = this._matchDateIdx( this.data, toAppend[ i ].date );
+                        if ( idx > -1 ) {
+                            this.data[ idx ].count += toAppend[ i ].count;
+                        } else {
+                            this.data.push( toAppend[ i ] );
+                        }
+                    }
+                }
+                this.calendarHeatmap();
+            },
+            updateOptions: function( obj ) {
+                this.settings = $.extend( true, {}, this.settings, obj );
+                this.calendarHeatmap();
+            },
+            getData: function( ) {
+                return this.data;
+            },
+            getOptions: function( ) {
+                return this.settings;
             }
         } );
 
