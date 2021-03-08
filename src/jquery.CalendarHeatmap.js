@@ -227,7 +227,7 @@
             _matchBin: function( range, value ) {
                 for ( var r in range ) {
                     if ( value >= range[ r ][ 0 ] && value <= range[ r ][ 1 ] ) {
-                        return r;
+                        return parseInt( r );
                     }
                 }
                 return 0;
