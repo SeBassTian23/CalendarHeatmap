@@ -451,11 +451,11 @@
                     .tooltip( this.settings.tooltips.options );
                 }
             },
-            updateData: function( arr ) {
+            updateDates: function( arr ) {
                 this.data = arr;
                 this.calendarHeatmap();
             },
-            appendData: function( arr ) {
+            appendDates: function( arr ) {
                 var toAppend =  this._parse( arr );
                 if ( Array.isArray( toAppend ) && Array.isArray( this.data ) ) {
                     for ( var i in toAppend ) {
@@ -473,7 +473,7 @@
                 this.settings = $.extend( true, {}, this.settings, obj );
                 this.calendarHeatmap();
             },
-            getData: function( ) {
+            getDates: function( ) {
                 return this.data;
             },
             getOptions: function( ) {

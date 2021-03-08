@@ -44,7 +44,7 @@ bower install jquery-calendar-heatmap
     $("#element").CalendarHeatmap( data, options );
     ```
 
-## Data
+## Dates (Data)
 
 The provided date needs to be a valid [date format] that can be interpreted by [Moment.js].
 The date needs to provide at least with year month and day, e.g. `YYYY-MM-DD` or as a unix timestamp e.g. `1578518342658`.
@@ -67,31 +67,31 @@ var data = { "2017-09-23": 2, ...}
 
 After the plugin is initialized for the element, the following options are available to interact with the calendar heatmap.
 
-### Get Data
+### Get Dates
 
-The currently displayed data from the calendar heatmap can be received using the `getData` argument. This is not the original data provided, but the data format internally used.
+The currently displayed data from the calendar heatmap can be received using the `getDates` argument. This is not the original data provided, but the data format internally used.
 
 ```JavaScript
 // Get current data from the calendar heatmap
-$("#element").CalendarHeatmap( "getData" );
+$("#element").CalendarHeatmap( "getDates" );
 ```
 
-### Update Data
+### Update Dates
 
-The data displayed in the calendar heatmap can be updated/replaced using the `updateData` argument and providing new data. In case data should be added to the existing, use the `dataAppend` argument. The data provided can be in any format described above.
+The data displayed in the calendar heatmap can be updated/replaced using the `updateDates` argument and providing new data. In case data should be added to the existing, use the `appendDates` argument. The data provided can be in any format described above.
 
 ```JavaScript
 // Update/Replace the current data with a new data
-$("#element").CalendarHeatmap( "updateData", data );
+$("#element").CalendarHeatmap( "updateDates", data );
 ```
 
-### Append Data
+### Append Dates
 
-Data can be added to the currently displayed data in the calendar heatmap using the `appendData` argument and providing the data to be added. The counts are added to existing dates. The data provided can be in any format described above.
+Dates can be added to the currently displayed data in the calendar heatmap using the `appendDates` argument and providing the data to be added. The counts are added to existing dates. The data provided can be in any format described above.
 
 ```JavaScript
 // Append data to the current data
-$("#element").CalendarHeatmap( "appendData", data );
+$("#element").CalendarHeatmap( "appendDates", data );
 ```
 
 ### Get Options

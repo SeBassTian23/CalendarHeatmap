@@ -149,11 +149,11 @@
 				});
 			}
 
-			$("#heatmap-5").CalendarHeatmap( 'updateData', data );
+			$("#heatmap-5").CalendarHeatmap( 'updateDates', data );
 		});
 
 		$("#heatmap-5-empty").on("click", function(){
-			$("#heatmap-5").CalendarHeatmap( 'updateData', [] );
+			$("#heatmap-5").CalendarHeatmap( 'updateDates', [] );
 		});
 
 		$("#heatmap-5-append").on("click", function(){
@@ -165,7 +165,7 @@
 					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
 				});
 			}
-			$("#heatmap-5").CalendarHeatmap( 'appendData', data );
+			$("#heatmap-5").CalendarHeatmap( 'appendDates', data );
 		});
 
 		$("#heatmap-5-wkday").on("click", function(){
