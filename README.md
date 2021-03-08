@@ -63,6 +63,57 @@ var data = [ "2017-09-23", ...]
 var data = { "2017-09-23": 2, ...}
 ```
 
+## Interactions (Functions)
+
+After the plugin is initialized for the element, the following options are available to interact with the calendar heatmap.
+
+### Get Data
+
+The currently displayed data from the calendar heatmap can be received using the `getData` argument. This is not the original data provided, but the data format internally used.
+
+```JavaScript
+// Get current data from the calendar heatmap
+$("#element").CalendarHeatmap( "getData" );
+```
+
+### Update Data
+
+The data displayed in the calendar heatmap can be updated/replaced using the `updateData` argument and providing new data. In case data should be added to the existing, use the `dataAppend` argument. The data provided can be in any format described above.
+
+```JavaScript
+// Update/Replace the current data with a new data
+$("#element").CalendarHeatmap( "updateData", data );
+```
+
+### Append Data
+
+Data can be added to the currently displayed data in the calendar heatmap using the `appendData` argument and providing the data to be added. The counts are added to existing dates. The data provided can be in any format described above.
+
+```JavaScript
+// Append data to the current data
+$("#element").CalendarHeatmap( "appendData", data );
+```
+
+### Get Options
+
+The options object with the current settings can be received using the `getOptions` argument. It contains all options, not just the ones initially set.
+
+```JavaScript
+// Get the calendar heatmap's current options
+$("#element").CalendarHeatmap( "getOptions" );
+```
+
+### Update Options
+
+The options object with the current settings can be updated using the `getOptions` argument. Individual options can be provided, the full object as returned by `getOptions` is not required.
+
+```JavaScript
+// Set the calendar heatmap's title option
+$("#element").CalendarHeatmap( "updateOptions" {
+    title: "New Title"
+} );
+```
+
 ## Options
 
 The Calendar Heat Map can be modified using the following options:
@@ -91,7 +142,8 @@ The Calendar Heat Map can be modified using the following options:
         show: true,
         align: "right",
         minLabel: "Less",
-        maxLabel: "More"
+        maxLabel: "More",
+        divider: " to "
     },
     tooltips: {
         show: false,
@@ -118,7 +170,7 @@ The year of the last month shown. Use the four letter notation, e.g. `2017`. If 
 
 ### weekStartDay
 
-The first day of the week. Set the day by setting the value between `1 - 7`, where `1` is Monday, `2` is Tuesday and so on. If not defined Monday is the start day.
+The first day of the week. Set the day by setting the value between `1 - 7`, where `1` is Monday, `2` is Tuesday and so on. If not defined, Monday is the start day.
 
 ### coloring
 
@@ -178,14 +230,15 @@ tiles: {
 
 ### `legend`
 
-The legend for the calendar heatmap is located below the heatmap and visible by default. The visibility can be set by setting `show` to `true` or `false`. Set the alignment using `align`. Options are `right`, `center` or `left`. Labels for min and max can be set using `minLabel` and `maxLabel`. Use `null` to hide the labels.
+The legend for the calendar heatmap is located below the heatmap and visible by default. The visibility can be set by setting `show` to `true` or `false`. Set the alignment using `align`. Options are `right`, `center` or `left`. Labels for min and max can be set using `minLabel` and `maxLabel`. Use `null` to hide the labels. Use the divider to change the word between the numbers in the legends tooltips. By default it is ` to ` (e.g. 1 to 10).
 
 ```JavaScript
 legend: {
     show: true,
     align: "right",
     minLabel: "Less",
-    maxLabel: "More"
+    maxLabel: "More",
+    divider: " to "
 }
 ```
 
