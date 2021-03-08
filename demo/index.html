@@ -54,6 +54,26 @@
 				<div id="heatmap-5"></div>
 			</div>
 		</div>
+		<div class="row my-4">
+			<div class="col">
+				<h3>Update the Calendar Heatmap</h3>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-random">Random Data</button>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-empty">Empty</button>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-append">Append Data</button>
+				<button class="btn btn-secondary btn-sm" id="heatmap-5-wkday">Toggle Weekdays</button>
+				<select class="form-control" style="display:inline; width:auto; margin-top:2px;" size="1" id="heatmap-5-coloring" >
+					<option value="standard">Default (standard)</option>
+					<option value="blue">Blues (blue)</option>
+					<option value="earth">Earth (earth)</option>
+					<option value="electric">Electric (electric)</option>
+					<option value="green">Greens (green)</option>
+					<option value="picknick">Picknick (picknick)</option>
+					<option value="red">Reds (red)</option>
+					<option value="teal">Teals (teal)</option>
+					<option value="viridis">Viridis (viridis)</option>
+				</select>
+			</div>
+		</div>
 	</div>
 	<script>
 		function randomDate(start, end) {
@@ -117,6 +137,55 @@
 		$("#heatmap-5").CalendarHeatmap( [], {
 			title: "No Data"
 		});
+
+		$("#heatmap-5-random").on("click", function(){
+
+			var events = ( Math.random() * 200 ).toFixed(0);
+			var data = [];
+			for (var i = 0; i < events; i++ ) {
+				data.push({
+					count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
+					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+				});
+			}
+
+			$("#heatmap-5").CalendarHeatmap( 'updateData', data );
+		});
+
+		$("#heatmap-5-empty").on("click", function(){
+			$("#heatmap-5").CalendarHeatmap( 'updateData', [] );
+		});
+
+		$("#heatmap-5-append").on("click", function(){
+			var events = ( Math.random() * 10 ).toFixed(0);
+			var data = [];
+			for (var i = 0; i < events; i++ ) {
+				data.push({
+					count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
+					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+				});
+			}
+			$("#heatmap-5").CalendarHeatmap( 'appendData', data );
+		});
+
+		$("#heatmap-5-wkday").on("click", function(){
+			var labels = $("#heatmap-5").CalendarHeatmap( 'getOptions' ).labels;
+			$("#heatmap-5").CalendarHeatmap( 'updateOptions', {
+				labels: {
+					days: (labels.days === true)? false : true
+				}
+			} );
+		});
+
+		$("#heatmap-5-coloring").on("change", function(){
+			$("#heatmap-5").CalendarHeatmap( 'updateOptions', {
+				coloring: $(this).val(),
+				legend: {
+					divider: " - "
+				}
+			} );
+		});
+
 	</script>
 </body>
 
