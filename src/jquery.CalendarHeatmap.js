@@ -26,7 +26,8 @@
                     show: true,
                     align: "right",
                     minLabel: "Less",
-                    maxLabel: "More"
+                    maxLabel: "More",
+                    divider: " to "
                 },
                 tooltips: {
                     show: false,
