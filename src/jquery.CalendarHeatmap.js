@@ -245,7 +245,10 @@
                 moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
                 true : false;
             },
-            addWeekColumn: function( ) {
+            _isNumeric: function( n ) {
+                return !isNaN( parseFloat( n ) ) && isFinite( n );
+            },
+            _addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
                     $( ".ch-year", this.element )
                         .append( "<div class=\"ch-week-labels\"></div>" );
