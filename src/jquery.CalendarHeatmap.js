@@ -237,6 +237,11 @@
                     return x.date === key;
                 } ) || null;
             },
+            _matchDateIdx: function( obj, key ) {
+                return obj.findIndex( function( x ) {
+                    return x.date === key;
+                } );
+            },
             _futureDate: function( str ) {
                 return moment( str ).diff( moment(), "days" ) >= 0 &&
                 moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
