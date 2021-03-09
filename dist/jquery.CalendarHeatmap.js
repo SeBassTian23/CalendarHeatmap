@@ -6,7 +6,7 @@
  *  Made by Sebastian Kuhlgert
  *  Under MIT License
  */
-;( function( $ ) {
+( function( $ ) {
 
     "use strict";
 
@@ -34,7 +34,8 @@
                     show: true,
                     align: "right",
                     minLabel: "Less",
-                    maxLabel: "More"
+                    maxLabel: "More",
+                    divider: " to "
                 },
                 tooltips: {
                     show: false,
@@ -64,25 +65,24 @@
                     console.log( "The calendar heatmap plugin requires moment.js" );
                 }
             },
-            parse: function() {
+            _parse: function( dates ) {
                 var arr = [];
-                var type = $.type( this.data );
-                if ( [ "array", "object" ].indexOf( type ) === -1 ) {
+                if ( !Array.isArray( dates ) || typeof dates !== "object" ) {
                     console.log( "Invalid data source" );
                     return null;
                 } else {
-                    if ( type === "array" && this.data.length > 0 ) {
-                        var arrtype = $.type( this.data[ 0 ] );
-                        if ( arrtype === "object" ) {
-                            if ( this.data[ 0 ].date && this.data[ 0 ].count ) {
+                    if ( Array.isArray( dates ) && dates.length > 0 ) {
+                        var arrtype = typeof dates[ 0 ];
+                        if ( typeof dates[ 0 ] === "object" && !Array.isArray( dates[ 0 ] ) ) {
+                            if ( dates[ 0 ].date && dates[ 0 ].count ) {
                                 arr = [];
-                                for ( var h in this.data ) {
-                                    var objDate = this.data[ h ].date;
-                                    if ( $.isNumeric( this.data[ h ].date ) ) {
-                                        objDate = parseInt( this.data[ h ].date );
+                                for ( var h in dates ) {
+                                    var objDate = dates[ h ].date;
+                                    if ( $.isNumeric( dates[ h ].date ) ) {
+                                        objDate = parseInt( dates[ h ].date );
                                     }
                                     arr.push( {
-                                        "count": parseInt( this.data[ h ].count ),
+                                        "count": parseInt( dates[ h ].count ),
                                         "date": moment( objDate ).format( "YYYY-MM-DD" )
                                     } );
                                 }
@@ -92,18 +92,16 @@
                                 return null;
                             }
                         } else if ( [ "string", "date", "number" ].indexOf( arrtype ) > -1 ) {
-                            if ( moment( this.data[ 0 ] ).isValid() ) {
+                            if ( moment( dates[ 0 ] ).isValid() ) {
                                 var obj = {};
-                                for ( var i in this.data ) {
-                                    var d = moment( this.data[ i ] ).format( "YYYY-MM-DD" );
-                                    console.log( d );
+                                for ( var i in dates ) {
+                                    var d = moment( dates[ i ] ).format( "YYYY-MM-DD" );
                                     if ( !obj[ d ] ) {
                                         obj[ d ] = 1;
                                     } else {
                                         obj[ d ] += 1;
                                     }
                                 }
-                                console.log( obj );
                                 arr = [];
                                 for ( var j in obj ) {
                                     arr.push( {
@@ -120,16 +118,16 @@
                             console.log( "Invalid format." );
                             return null;
                         }
-                    } else if ( type === "array" && this.data.length === 0 ) {
+                    } else if ( Array.isArray( dates ) && dates.length === 0 ) {
                         return [];
-                    } else if ( type === "object" && !Object.empty( this.data ) ) {
-                        var keys = Object.keys( this.data );
+                    } else if ( typeof dates === "object" && !Object.empty( dates ) ) {
+                        var keys = Object.keys( dates );
                         if ( moment( keys[ 0 ] ).isValid() ) {
-                            if ( $.type( this.data[ keys[ 0 ] ] ) === "number" ) {
+                            if ( this._isNumeric( dates[ keys[ 0 ] ] ) ) {
                                 var data = [];
-                                for ( var k in this.data ) {
+                                for ( var k in dates ) {
                                     data.push( {
-                                        "count": parseInt( this.data[ k ] ),
+                                        "count": parseInt( dates[ k ] ),
                                         "date": moment( k ).format( "YYYY-MM-DD" )
                                     } );
                                 }
@@ -144,11 +142,11 @@
                     }
                 }
             },
-            pad: function( str, max ) {
+            _pad: function( str, max ) {
                 str = String( str );
-                return str.length < max ? this.pad( "0" + str, max ) : str;
+                return str.length < max ? this._pad( "0" + str, max ) : str;
             },
-            calculateBins: function( events ) {
+            _calculateBins: function( events ) {
 
                 // Calculate bins for events
                 var i;
@@ -156,13 +154,14 @@
                 var binlabels = [ "0" ];
                 var binlabelrange = [ [ 0, 0 ] ];
 
+                // Create an array with all counts
                 var arr = events.map( function( x ) {
                     return parseInt( x.count );
                 } );
 
                 var minCount = Math.min.apply( Math, arr );
                 var maxCount = Math.max.apply( Math, arr );
-                var stepWidth = ( maxCount - minCount ) / bins;
+                var stepWidth = Math.ceil( ( maxCount - minCount ) / bins );
 
                 if ( stepWidth === 0 ) {
                     stepWidth = maxCount / bins;
@@ -171,89 +170,68 @@
                     }
                 }
 
-                // Generate bin labels
-                for ( i = 0; i < bins; i++ ) {
-                    if ( !isFinite( minCount ) ) {
-                        binlabels.push( "" );
-                        binlabelrange.push( [ null, null ] );
-                    } else if ( maxCount < bins ) {
-                        if ( ( i - ( bins - maxCount ) ) >= 0 ) {
-                            binlabels.push( String( 1 + ( i - ( bins - maxCount ) ) ) );
-                            binlabelrange.push( [
-                                ( 1 + ( i - ( bins - maxCount ) ) ),
-                                ( 1 + ( i - ( bins - maxCount ) ) )
-                            ] );
-                        } else {
-                            binlabels.push( "" );
-                            binlabelrange.push( [ null, null ] );
-                        }
-                    } else if ( maxCount === bins ) {
-                        binlabels.push( String( ( i + 1 ) ) );
-                        binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
-                    } else if ( ( maxCount / 2 ) < bins ) {
-                        if ( ( i + 1 ) === bins ) {
-                            binlabels.push( String( ( i + 1 ) ) + "+" );
-                            binlabelrange.push( [ ( i + 1 ), null ] );
-                        } else {
-                            binlabels.push( String( ( i + 1 ) ) );
-                            binlabelrange.push( [ ( i + 1 ), ( i + 1 ) ] );
-                        }
-                    } else {
-                        var l = Math.ceil( i * stepWidth ) + 1;
-                        var ll = Math.ceil( i * stepWidth + stepWidth );
-                        if ( i === ( bins - 1 ) ) {
-                            ll = maxCount;
-                        }
-                        binlabelrange.push( [ l, ll ] );
+                // Generate bin lables and ranges
+                binlabelrange = [ [ 0, 0 ] ];
+                if ( !Number.isFinite( minCount ) ) {
+                    binlabels = [ "" ];
+                } else {
+                    binlabels = [ "0" ];
+                }
 
-                        // TODO: Fix counting issue:  && ll < maxCount
-                        if ( i === ( bins - 1 ) ) {
-                            l += "+";
-                        } else {
-                            if ( l !== ll ) {
-                                l += " to ";
-                                l += ll;
-                            }
-                        }
-                        binlabels.push( String( l ) );
+                for ( i = 0; i < bins; i++ ) {
+
+                    var r1 = ( stepWidth * i ) + 1;
+                    var r2 = stepWidth * ( i + 1 );
+
+                    binlabelrange.push( [ r1, r2 ] );
+
+                    if ( !Number.isFinite( minCount ) ) {
+                        binlabels.push( "" );
+                    } else if ( Number.isNaN( r1 ) || !Number.isFinite( r1 ) ) {
+                        binlabels.push( "" );
+                    } else if ( r1 === r2 ) {
+                        binlabels.push( String( r1 ) );
+                    } else {
+                        binlabels.push( String( r1 ) +
+                            ( this.settings.legend.divider || " to " ) +
+                            String( r2 ) );
                     }
                 }
 
-                // Assign bins to counts
+                // Assign levels (bins) to counts
                 for ( i in events ) {
-
-                    if ( events[ i ].count === 0 ) {
-                        events[ i ].level = 0;
-                    } else if ( events[ i ].count - minCount === 0 ) {
-                        events[ i ].level = 1;
-                    } else if ( !isFinite( minCount ) ) {
-                        events[ i ].level = bins;
-                    } else {
-                        events[ i ].level = this.matchBin( binlabelrange, events[ i ].count );
-                    }
+                    events[ i ].level = this._matchBin( binlabelrange, events[ i ].count );
                 }
 
                 return { events: events, bins: binlabels };
             },
-            matchBin: function( range, value ) {
+            _matchBin: function( range, value ) {
                 for ( var r in range ) {
                     if ( value >= range[ r ][ 0 ] && value <= range[ r ][ 1 ] ) {
-                        return r;
+                        return parseInt( r );
                     }
                 }
                 return 0;
             },
-            matchDate: function( obj, key ) {
+            _matchDate: function( obj, key ) {
                 return obj.find( function( x ) {
                     return x.date === key;
                 } ) || null;
             },
-            futureDate: function( str ) {
+            _matchDateIdx: function( obj, key ) {
+                return obj.findIndex( function( x ) {
+                    return x.date === key;
+                } );
+            },
+            _futureDate: function( str ) {
                 return moment( str ).diff( moment(), "days" ) >= 0 &&
                 moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
                 true : false;
             },
-            addWeekColumn: function( ) {
+            _isNumeric: function( n ) {
+                return !isNaN( parseFloat( n ) ) && isFinite( n );
+            },
+            _addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
                     $( ".ch-year", this.element )
                         .append( "<div class=\"ch-week-labels\"></div>" );
@@ -278,9 +256,9 @@
                         var dayNumber = moment().weekday( ( i + swd ) ).format( "d" );
                         if ( ( i - 1 ) % 2 ) {
                             var wdl = this.settings.labels.custom.weekDayLabels;
-                            if ( $.type( wdl ) === "array" ) {
+                            if ( Array.isArray( wdl ) ) {
                                 dayName = wdl[ dayNumber ] || "";
-                            } else if ( $.type( wdl ) === "string" ) {
+                            } else if ( typeof wdl === "string" ) {
                                 dayName = moment().weekday( ( i + swd ) )
                                 .format( wdl );
                             }
@@ -297,13 +275,14 @@
             },
             calendarHeatmap: function( ) {
 
-                var data = this.parse();
+                var data = this._parse( this.data );
 
-                if ( $.type( data ) !== "array" ) {
+                if ( !Array.isArray( data ) ) {
                     return;
                 }
 
-                var calc = this.calculateBins( data );
+                this.data = data;
+                var calc = this._calculateBins( data );
                 var events = calc.events;
                 var binLabels = calc.bins;
                 var currMonth = this.settings.lastMonth;
@@ -330,7 +309,7 @@
                     .append( "<div class=\"ch-year\"></div>" );
 
                 // Add labels
-                this.addWeekColumn();
+                this._addWeekColumn();
 
                 // Adjust tile shape
                 if ( this.settings.tiles.shape && this.settings.tiles.shape !== "square" ) {
@@ -351,7 +330,7 @@
                     var monthName = moment().set( { "month": month, "year": year } )
                     .format( "MMM" );
                     if ( this.settings.labels.custom.monthLabels ) {
-                        if ( $.type( this.settings.labels.custom.monthLabels ) === "array" ) {
+                        if ( Array.isArray( this.settings.labels.custom.monthLabels ) ) {
                             monthName = this.settings.labels.custom.monthLabels[ month ] || "";
                         } else {
                             monthName = moment().set( { "month": month, "year": year } )
@@ -379,11 +358,11 @@
                     // Week day counter
                     var wc = 0;
                     for ( var j = 0; j < days; j++ ) {
-                        var str = year + "-" + this.pad( ( month + 1 ), 2 );
-                        str += "-" + this.pad( ( j + 1 ), 2 );
-                        var obj = this.matchDate( events, str );
+                        var str = year + "-" + this._pad( ( month + 1 ), 2 );
+                        str += "-" + this._pad( ( j + 1 ), 2 );
+                        var obj = this._matchDate( events, str );
                         var future = "";
-                        if ( this.futureDate( str ) ) {
+                        if ( this._futureDate( str ) ) {
                             future = " is-after-today";
                         }
                         if ( obj ) {
@@ -479,18 +458,94 @@
                     $( "[data-toggle=\"tooltip\"]", this.element )
                     .tooltip( this.settings.tooltips.options );
                 }
+            },
+            updateDates: function( arr ) {
+                this.data = arr;
+                this.calendarHeatmap();
+            },
+            appendDates: function( arr ) {
+                var toAppend =  this._parse( arr );
+                if ( Array.isArray( toAppend ) && Array.isArray( this.data ) ) {
+                    for ( var i in toAppend ) {
+                        var  idx = this._matchDateIdx( this.data, toAppend[ i ].date );
+                        if ( idx > -1 ) {
+                            this.data[ idx ].count += toAppend[ i ].count;
+                        } else {
+                            this.data.push( toAppend[ i ] );
+                        }
+                    }
+                }
+                this.calendarHeatmap();
+            },
+            updateOptions: function( obj ) {
+                this.settings = $.extend( true, {}, this.settings, obj );
+                this.calendarHeatmap();
+            },
+            getDates: function( ) {
+                return this.data;
+            },
+            getOptions: function( ) {
+                return this.settings;
             }
         } );
 
         // A really lightweight plugin wrapper around the constructor,
         // preventing against multiple instantiations
         $.fn[ pluginName ] = function( data, options ) {
-            return this.each( function() {
-                if ( !$.data( this, "plugin_" + pluginName ) ) {
-                    $.data( this, "plugin_" +
-                        pluginName, new Plugin( this, data, options ) );
-                }
-            } );
+            var args = arguments;
+
+            // Is the first parameter an object (options), or was omitted,
+            // instantiate a new instance of the plugin.
+            // if ( data === undefined || typeof data === "object" ) {
+            if ( Array.isArray( data ) ) {
+                return this.each( function() {
+
+                    // Only allow the plugin to be instantiated once,
+                    // so we check that the element has no plugin instantiation yet
+                    if ( !$.data( this, "plugin_" + pluginName ) ) {
+
+                        // if it has no instance, create a new one,
+                        // pass options to our plugin constructor,
+                        // and store the plugin instance
+                        // in the elements jQuery data object.
+                        $.data( this, "plugin_" + pluginName, new Plugin( this, data, options ) );
+                    }
+                } );
+
+            // If the first parameter is a string and it doesn't start
+            // with an underscore or "contains" the `init`-function,
+            // treat this as a call to a public method.
+            } else if ( typeof data === "string" && data[ 0 ] !== "_" && data !== "init" ) {
+
+                // Cache the method call
+                // to make it possible
+                // to return a value
+                var returns;
+
+                this.each( function() {
+                    var instance = $.data( this, "plugin_" + pluginName );
+
+                    // Tests that there's already a plugin-instance
+                    // and checks that the requested public method exists
+                    if ( instance instanceof Plugin && typeof instance[ data ] === "function" ) {
+
+                        // Call the method of our plugin instance,
+                        // and pass it the supplied arguments.
+                        returns = instance[ data ].apply( instance,
+                            Array.prototype.slice.call( args, 1 ) );
+                    }
+
+                    // Allow instances to be destroyed via the 'destroy' method
+                    if ( data === "destroy" ) {
+                        $( this ).removeData();
+                    }
+                } );
+
+                // If the earlier cached method
+                // gives a value back return the value,
+                // otherwise return this to preserve chainability.
+                return returns !== undefined ? returns : this;
+            }
         };
 
 } )( jQuery );
