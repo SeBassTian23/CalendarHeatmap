@@ -35,21 +35,21 @@
   },
   "devDependencies": {
     "eslint-config-jquery": "^3.0.0",
-    "grunt": "^1.3.0",
+    "grunt": "^1.4.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^4.0.0",
     "grunt-contrib-jshint": "^3.0.0",
     "grunt-contrib-less": "^3.0.0",
-    "grunt-contrib-uglify": "^5.0.0",
+    "grunt-contrib-uglify": "^5.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-eslint": "^23.0.0",
-    "grunt-karma": "^4.0.0",
-    "karma": "^6.1.1",
+    "grunt-karma": "^4.0.2",
+    "karma": "^6.3.4",
     "karma-brave-launcher": "^1.0.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-qunit": "^4.1.2",
     "karma-safari-launcher": "^1.0.0",
-    "qunit": "^2.14.0"
+    "qunit": "^2.16.0"
   },
   "scripts": {
     "test": "grunt eslint && grunt travis --verbose",
