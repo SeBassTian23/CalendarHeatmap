@@ -8,8 +8,8 @@
                 title: null,
                 months: 12,
                 weekStartDay: 1,
-                lastMonth: moment().month() + 1,
-                lastYear: moment().year(),
+                lastMonth: new Date().getMonth() + 1,
+                lastYear: new Date().getFullYear(),
                 coloring: null,
                 labels: {
                     days: false,
@@ -51,11 +51,6 @@
 
                 // Run Calandar Heatmap Function
                 this.calendarHeatmap();
-
-                // Check if the moment.js library is available.
-                if ( !moment ) {
-                    console.log( "The calendar heatmap plugin requires moment.js" );
-                }
             },
             _parse: function( dates ) {
                 var arr = [];
@@ -70,12 +65,12 @@
                                 arr = [];
                                 for ( var h in dates ) {
                                     var objDate = dates[ h ].date;
-                                    if ( $.isNumeric( dates[ h ].date ) ) {
+                                    if ( this._isNumeric( dates[ h ].date ) ) {
                                         objDate = parseInt( dates[ h ].date );
                                     }
                                     arr.push( {
                                         "count": parseInt( dates[ h ].count ),
-                                        "date": moment( objDate ).format( "YYYY-MM-DD" )
+                                        "date": this._dateFormat( objDate )
                                     } );
                                 }
                                 return arr;
@@ -84,10 +79,10 @@
                                 return null;
                             }
                         } else if ( [ "string", "date", "number" ].indexOf( arrtype ) > -1 ) {
-                            if ( moment( dates[ 0 ] ).isValid() ) {
+                            if ( this._dateValid( dates[ 0 ] ) ) {
                                 var obj = {};
                                 for ( var i in dates ) {
-                                    var d = moment( dates[ i ] ).format( "YYYY-MM-DD" );
+                                    var d = this._dateFormat( dates[ i ] );
                                     if ( !obj[ d ] ) {
                                         obj[ d ] = 1;
                                     } else {
@@ -114,13 +109,13 @@
                         return [];
                     } else if ( typeof dates === "object" && !Object.empty( dates ) ) {
                         var keys = Object.keys( dates );
-                        if ( moment( keys[ 0 ] ).isValid() ) {
+                        if ( this._dateValid( keys[ 0 ] ) ) {
                             if ( this._isNumeric( dates[ keys[ 0 ] ] ) ) {
                                 var data = [];
                                 for ( var k in dates ) {
                                     data.push( {
                                         "count": parseInt( dates[ k ] ),
-                                        "date": moment( k ).format( "YYYY-MM-DD" )
+                                        "date": this._dateFormat( k )
                                     } );
                                 }
                                 return data;
@@ -153,7 +148,7 @@
 
                 var minCount = Math.min.apply( Math, arr );
                 var maxCount = Math.max.apply( Math, arr );
-                var stepWidth = Math.ceil( ( maxCount - minCount ) / bins );
+                var stepWidth = Math.ceil( maxCount / bins );
 
                 if ( stepWidth === 0 ) {
                     stepWidth = maxCount / bins;
@@ -216,12 +211,139 @@
                 } );
             },
             _futureDate: function( str ) {
-                return moment( str ).diff( moment(), "days" ) >= 0 &&
-                moment( str ).format( "YYYY-MM-DD" ) !== moment().format( "YYYY-MM-DD" ) ?
-                true : false;
+                var current = this._dateFormat().split( "-" );
+                var compare = str.split( "-" );
+
+                if ( parseInt( current[ 0 ] ) < parseInt( compare[ 0 ] ) ) {
+                    return true;
+                } else if ( parseInt( current[ 0 ] ) === parseInt( compare[ 0 ] ) &&
+                        parseInt( current[ 1 ] ) < parseInt( compare[ 1 ] )
+                    ) {
+                    return true;
+                } else if ( parseInt( current[ 0 ] ) === parseInt( compare[ 0 ] ) &&
+                        parseInt( current[ 1 ] ) === parseInt( compare[ 1 ] ) &&
+                        parseInt( current[ 2 ] ) < parseInt( compare[ 2 ] )
+                    ) {
+                    return true;
+                }
+                return false;
             },
             _isNumeric: function( n ) {
                 return !isNaN( parseFloat( n ) ) && isFinite( n );
+            },
+            _dateValid: function( d ) {
+                if ( String( d ).match( /^(\d{4}-\d{2}-\d{2})$/ ) ||
+                    ( String( d ).match( /^(\d{1,13})$/ ) && typeof d === "number" ) ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            _dateWords: {
+                "MMM": [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec"
+                ],
+                "MMMM": [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
+                ],
+                "dd": [
+                    "Su",
+                    "Mo",
+                    "Tu",
+                    "We",
+                    "Th",
+                    "Fr",
+                    "Sa"
+                ],
+                "ddd": [
+                    "Sun",
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat"
+                ],
+                "dddd": [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday"
+                ]
+            },
+            _dateFormat: function( d, str ) {
+                if ( d === undefined ) {
+                    d = new Date();
+                } else {
+                    if ( typeof d === "string" ) {
+                        d = d.split( "-" );
+                        d = new Date( parseInt( d[ 0 ] ),
+                                parseInt( d[ 1 ] ) - 1,
+                                parseInt( d[ 2 ] )
+                            );
+                    }
+                }
+                if ( str === undefined ) {
+                    str = "YYYY-MM-DD";
+                }
+                var words = this._dateWords;
+                return str.replace( /(Y{2,4})|(M{1,4})|(d{1,4})|(D{1,2})/g, function( s ) {
+                    if ( s === "YY" ) {
+                        return parseInt( d.getFullYear().toString().slice( 2, 4 ) );
+                    }
+                    if ( s === "YYYY" ) {
+                        return d.getFullYear();
+                    }
+                    if ( s === "M" ) {
+                        return d.getMonth() + 1;
+                    }
+                    if ( s === "MM" ) {
+                        str = String( d.getMonth() + 1 );
+                        return str.length < 2 ? "0" + str : str;
+                    }
+                    if ( s === "MMM" || s === "MMMM" ) {
+                        return words[ s ][ d.getMonth() ];
+                    }
+                    if ( s === "D" ) {
+                        return d.getDate();
+                    }
+                    if ( s === "DD" ) {
+                        str = String( d.getDate() );
+                        return str.length < 2 ? "0" + str : str;
+                    }
+                    if ( s === "d" ) {
+                        return d.getDay() + 1;
+                    }
+                    if ( s === "dd" || s === "ddd" || s === "dddd" ) {
+                        return words[ s ][ d.getDay() ];
+                    }
+                    return s;
+                } );
             },
             _addWeekColumn: function( ) {
                 if ( this.settings.labels.days ) {
@@ -244,15 +366,17 @@
 
                     for ( var i = 0; i < 7; i++ ) {
 
-                        var dayName = moment().weekday( ( i + swd ) ).format( "ddd" );
-                        var dayNumber = moment().weekday( ( i + swd ) ).format( "d" );
+                        var dayNumber = ( ( i + swd ) < 7 ) ? ( i + swd ) : ( i + swd - 7 );
+                        var dayName = this._dateWords.ddd[ dayNumber ];
+
                         if ( ( i - 1 ) % 2 ) {
                             var wdl = this.settings.labels.custom.weekDayLabels;
                             if ( Array.isArray( wdl ) ) {
                                 dayName = wdl[ dayNumber ] || "";
                             } else if ( typeof wdl === "string" ) {
-                                dayName = moment().weekday( ( i + swd ) )
-                                .format( wdl );
+                                dayName = this._dateWords[ wdl ][ dayNumber ] || "";
+                            } else if ( typeof wdl === "function" ) {
+                                dayName = wdl( dayNumber );
                             }
                         } else {
                             dayName = "&nbsp;";
@@ -308,25 +432,38 @@
                     $( this.element ).addClass( " ch-" + this.settings.tiles.shape );
                 }
 
-                // Start building the months
-                for ( i = months; i > 0; i-- ) {
-
-                    var month = currMonth - i;
-                    var year = currYear;
+                var month = currMonth;
+                var year = currYear;
+                var blocks = [];
+                for ( i = 0; i < months; i++ ) {
+                    month += -1;
                     if ( month < 0 ) {
                         year -= 1;
-                        month += 12; // TODO: FIX for more than one year
+                        month += 12;
                     }
+                    blocks.push( [ month, year ] );
+                }
+
+                // Reverse the array to show the latest month last
+                blocks.reverse();
+
+                // Start building the months
+                for ( i = 0; i < blocks.length; i++ ) {
+
+                    month = blocks[ i ][ 0 ];
+                    year = blocks[ i ][ 1 ];
 
                     // Build Month
-                    var monthName = moment().set( { "month": month, "year": year } )
-                    .format( "MMM" );
-                    if ( this.settings.labels.custom.monthLabels ) {
-                        if ( Array.isArray( this.settings.labels.custom.monthLabels ) ) {
-                            monthName = this.settings.labels.custom.monthLabels[ month ] || "";
+                    var monthName = this._dateFormat( year + "-" + ( month + 1 ) + "-1", "MMM" );
+
+                    var ml = this.settings.labels.custom.monthLabels;
+                    if ( ml ) {
+                        if ( Array.isArray( ml ) ) {
+                            monthName = ml[ month ] || "";
+                        } else if ( typeof ml === "function" ) {
+                            monthName = ml( year, month + 1 );
                         } else {
-                            monthName = moment().set( { "month": month, "year": year } )
-                                .format( this.settings.labels.custom.monthLabels );
+                            monthName = this._dateFormat( year + "-" + ( month + 1 ) + "-1", ml );
                         }
                     }
                     $( ".ch-year", this.element )
@@ -341,7 +478,7 @@
                     }
 
                     // Get the number of days for the month
-                    var days = moment().set( { "month": month, "year": year } ).daysInMonth();
+                    var days = new Date( year, ( month + 1 ), 0 ).getDate();
 
                     // Add the first week
                     $( ".ch-month:last .ch-weeks", this.element )
@@ -359,7 +496,7 @@
                         }
                         if ( obj ) {
                             var title = obj.count + " on ";
-                            title += moment( obj.date ).format( "ll" );
+                            title += this._dateFormat( obj.date, "MMM D, YYYY" );
 
                             var color = "";
 
@@ -384,11 +521,10 @@
                         }
 
                         // Get the iso week day to see if a new week has started
-                        var wd = moment().set( {
-                            "date": ( j + 2 ),
-                            "month": month,
-                            "year": year
-                        } ).isoWeekday();
+                        var wd = new Date( year, month, ( j + 2 ) ).getDay();
+                        if ( wd === 0 ) {
+                            wd = 7;
+                        }
 
                         // Incrementing the day counter for the week
                         wc++;
