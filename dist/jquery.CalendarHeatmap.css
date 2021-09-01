@@ -1,5 +1,5 @@
 /*
- *  jquery-calendar-heatmap - v1.2.0
+ *  jquery-calendar-heatmap - v1.3.0
  *  A simple Calendar Heatmap for jQuery.
  *  https://github.com/SeBassTian23/CalendarHeatmap
  *
