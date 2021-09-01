@@ -17,8 +17,8 @@
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-	<script src="../dist/jquery.CalendarHeatmap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"></script>
+	<script src="../dist/jquery.CalendarHeatmap.js"></script>
 </head>
 
 <body>
@@ -78,15 +78,27 @@
 	<script>
 		function randomDate(start, end) {
 			var date = new Date(+start + Math.random() * (end - start));
-			return moment(date).format('YYYY-MM-DD');
+			var out = String(date.getFullYear())+ "-";
+			if (date.getMonth() + 1 < 10)
+				out += "0" + String(date.getMonth() + 1);
+			else
+				out += String(date.getMonth() + 1);
+			out += "-";
+			if (date.getDate() < 10)
+				out += "0" + String(date.getDate());
+			else
+				out += String(date.getDate());
+			return out;
 		}
 
 		var events = ( Math.random() * 200 ).toFixed(0);
 		var data = [];
 		for (var i = 0; i < events; i++ ) {
+			var current = new Date();
+			var rndStart = new Date( current.getFullYear() - 1, current.getMonth() - 5, current.getDate() );
 			data.push({
 				count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
-				date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+				date: randomDate( rndStart.valueOf(), current.valueOf() )
 			});
 		}
 
@@ -96,7 +108,7 @@
 
 		$("#heatmap-2").CalendarHeatmap(data, {
 			title: "Gradient \"red\", end one month from current",
-			lastMonth: moment().month(),
+			lastMonth: new Date().getMonth() + 1,
 			coloring: "red",
 			legend: {
 				minLabel: "Fewer"
@@ -111,7 +123,7 @@
 		$("#heatmap-3").CalendarHeatmap(data, {
 			title: "Gradient \"electric\", labels days and custom month labels, end one year from current, week starts on Sunday",
 			months: 5,
-			lastYear: moment().subtract(1,'years').year(),
+			lastYear: new Date().getFullYear() - 1,
 			coloring: "electric",
 			legend: {
 				align: "left",
@@ -130,14 +142,36 @@
 		});
 
 		$("#heatmap-4").CalendarHeatmap( data, {
-			title: "Tile shape \"Circle\"",
+			title: "Tile shape \"Circle\" and using Moment to localize Weekday and Month Labels",
 			tiles: {
 				shape: "circle"
+			},
+			labels: {
+				months: true,
+				days: true,
+				custom: {
+					weekDayLabels: function( weekday ) {
+						moment.locale('ar');
+						return moment.weekdays(true, weekday);
+					},
+					monthLabels: function( year, month ) {
+						moment.locale('ar');
+						return moment.months(true, month) 
+							+ " '"
+							+ moment().year(year).format("YY");
+					}
+				}
 			}
 		});
 
 		$("#heatmap-5").CalendarHeatmap( [], {
-			title: "No Data"
+			title: "Interactive",
+			labels: {
+				days: true,
+				custom: {
+					weekDayLabels: "dd"
+				}
+			}
 		});
 
 		$("#heatmap-5-random").on("click", function(){
@@ -145,9 +179,11 @@
 			var events = ( Math.random() * 200 ).toFixed(0);
 			var data = [];
 			for (var i = 0; i < events; i++ ) {
+				var current = new Date();
+				var rndStart = new Date( current.getFullYear() - 1, current.getMonth() - 5, current.getDate() );
 				data.push({
 					count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
-					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+					date: randomDate( rndStart.valueOf(), current.valueOf() )
 				});
 			}
 
@@ -162,9 +198,11 @@
 			var events = ( Math.random() * 10 ).toFixed(0);
 			var data = [];
 			for (var i = 0; i < events; i++ ) {
+				var current = new Date();
+				var rndStart = new Date( current.getFullYear() - 1, current.getMonth() - 5, current.getDate() );
 				data.push({
 					count: parseInt( ( Math.random() * 200 ).toFixed(0) ),
-					date: randomDate( moment().subtract(1, 'year').subtract(5,'months').format('x'), moment().format('x') )
+					date: randomDate( rndStart.valueOf(), current.valueOf() )
 				});
 			}
 			$("#heatmap-5").CalendarHeatmap( 'appendDates', data );

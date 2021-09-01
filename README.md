@@ -23,16 +23,19 @@ bower install jquery-calendar-heatmap
 + Download the latest release from [here](https://github.com/SeBassTian23/CalendarHeatmap/releases/latest).
 + Copy the `jquery.CalendarHeatmap.js` and the `jquery.CalendarHeatmap.css` into your project. Of cause you can use the minified versions, indicated by `.min.js` and `.min.css` as well.
 
+### Moment.js
+
+Past releases required [Moment.js] to function. With the release of `v1.3.0`, Moment.js is no longer required as an dependency, as development has been stopped and it has been deprecated. Of cause it can still be used, or other packages for that matter, to format the labels as described below.
+
 ## Usage
 
-1. Include [jQuery] and [Moment.js] into the header of your html file:
+1. Include [jQuery] into the header of your html file:
 
     ```html
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     ```
 
-2. Include the plugin *after* [jQuery] and [Moment.js]:
+2. Include the plugin *after* [jQuery]:
 
     ```html
     <script src="dist/jquery.CalendarHeatmap.min.js"></script>
@@ -217,6 +220,49 @@ labels: {
     }
 }
 ```
+
+#### Supported Formats
+
+| Input    | Example       | Description               |
+| :------- | :------------ | :------------------------ |
+| YYYY     | 2014          | 4 digit year              |
+| YY       | 14            | 2 digit year              |
+| M MM     | 1..12         | Month number              |
+| MMM MMMM | Jan..December | Month name                |
+| D DD     | 1..31         | Day of month              |
+| Do       | 1st..31st     | Day of month with ordinal |
+| DDD DDDD | 1..365        | Day of year               |
+| d        | 0..6          | Day of the week numeric   |
+| dd       | Su...Sa       | Day name                  |
+| ddd dddd | Mon...Sunday  | Day name                  |
+| ll       | Mon...Sunday  | Day name                  |
+| ddd dddd | Mon...Sunday  | Day name                  |
+
+#### Function
+
+In some cases, you might want to use libraries like [Moment.js] for naming your months and weekdays, even though [Moment.js] is no longer a required dependency for the plugin. In this case you can simply use a function to modify the label.
+
+The example below is changing the weekday and month labels using [Moment.js].
+
+```JavaScript
+labels: {
+    months: true,
+    days: true,
+    custom: {
+        weekDayLabels: function( weekday ) {
+            return moment.weekdays( weekday );
+        },
+        monthLabels: function( year, month ) {
+            return moment.months( month ) + " '" + moment().year( year ).format("YY");
+        }
+    }
+}
+```
+
+| Label   | Function                           | Available Variables                          |
+| :------ | :--------------------------------- | :------------------------------------------- |
+| Weekday | `function ( weekday ) { ... }`     | weekday <int>, ranging from 0..6 (Sun..Sat)  |
+| Month   | `function ( year, month ) { ... }` | year <int> and day <int>, ranging from 1..12 |
 
 ### `tiles`
 
