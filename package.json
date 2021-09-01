@@ -31,8 +31,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "jquery": "^3.6.0",
-    "moment": "^2.29.1"
+    "jquery": "^3.6.0"
   },
   "devDependencies": {
     "eslint-config-jquery": "^3.0.0",
